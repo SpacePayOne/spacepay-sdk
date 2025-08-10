@@ -1,0 +1,18 @@
+# Build output
+dist/
+node_modules/
+
+# Package files
+yarn.lock
+package-lock.json
+
+# Git
+.git/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
