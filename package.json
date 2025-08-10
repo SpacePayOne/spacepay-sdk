@@ -5,6 +5,13 @@
   "description": "Lightweight SDK for SpacePay-like API - works in Node 18+ and modern browsers",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
   "files": [
     "dist"
   ],
@@ -13,7 +20,9 @@
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
     "prepublishOnly": "yarn clean && yarn build",
-    "test": "echo \"No tests specified\" && exit 0",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "format": "prettier --write \"src/**/*.{ts,js}\" \"examples/**/*.{ts,js}\"",
     "format:check": "prettier --check \"src/**/*.{ts,js}\" \"examples/**/*.{ts,js}\"",
     "lint": "eslint \"src/**/*.ts\" \"examples/**/*.ts\"",
@@ -33,13 +42,16 @@
     "node": ">=18.0.0"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/node": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^8.39.0",
     "@typescript-eslint/parser": "^8.39.0",
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "jest": "^30.0.5",
     "prettier": "^3.6.2",
+    "ts-jest": "^29.4.1",
     "typescript": "^5.0.0"
   },
   "repository": {
