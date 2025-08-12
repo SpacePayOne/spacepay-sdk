@@ -94,7 +94,7 @@ describe('SpacePayClient', () => {
           headers: expect.objectContaining({
             'Content-Type': 'application/json',
             Authorization: 'Bearer test_secret_key',
-            'X-Spay-Access-Key': 'test_public_key',
+            'X-SpacePay-Secret-Key': 'test_public_key',
           }),
           body: JSON.stringify({
             amount: '50.00',
@@ -159,12 +159,12 @@ describe('SpacePayClient', () => {
 
       expect(result).toEqual(mockResponse)
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://api.spacepay.com/v1/payments/pay_123',
+        'https://api.spacepay.com/v1/external/payments/pay_123',
         expect.objectContaining({
           method: 'GET',
           headers: expect.objectContaining({
             Authorization: 'Bearer test_secret_key',
-            'X-Spay-Access-Key': 'test_public_key',
+            'X-SpacePay-Secret-Key': 'test_public_key',
           }),
         })
       )

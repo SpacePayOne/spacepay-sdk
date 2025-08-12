@@ -36,7 +36,7 @@ export class SpacePayClient {
     opts?: { idempotencyKey?: string }
   ): Promise<CreatePaymentResponse> {
     const idem = opts?.idempotencyKey ?? uuid()
-    return this.request<CreatePaymentResponse>('/v1/payments', {
+    return this.request<CreatePaymentResponse>('/v1/external/payments', {
       method: 'POST',
       headers: { 'Idempotency-Key': idem },
       body: JSON.stringify(body),
@@ -49,7 +49,7 @@ export class SpacePayClient {
   async getPaymentStatus(paymentId: string): Promise<PaymentStatusResponse> {
     if (!paymentId) throw new Error('paymentId required')
     return this.request<PaymentStatusResponse>(
-      `/v1/payments/${encodeURIComponent(paymentId)}`,
+      `/v1/external/payments/${encodeURIComponent(paymentId)}`,
       {
         method: 'GET',
       }
@@ -68,8 +68,8 @@ export class SpacePayClient {
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${this.secretKey}`,
-      'X-Spay-Access-Key': this.publicKey, // optional identification header
+      'X-SpacePay-Access-Key': this.publicKey,
+      'X-SpacePay-Secret-Key': this.secretKey,
       ...(init.headers ?? {}),
     } as Record<string, string>
 

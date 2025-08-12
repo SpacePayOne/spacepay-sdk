@@ -26,7 +26,8 @@
     "format": "prettier --write \"src/**/*.{ts,js}\" \"examples/**/*.{ts,js}\"",
     "format:check": "prettier --check \"src/**/*.{ts,js}\" \"examples/**/*.{ts,js}\"",
     "lint": "eslint \"src/**/*.ts\" \"examples/**/*.ts\"",
-    "lint:fix": "eslint \"src/**/*.ts\" \"examples/**/*.ts\" --fix"
+    "lint:fix": "eslint \"src/**/*.ts\" \"examples/**/*.ts\" --fix",
+    "run:example": "tsx examples/basic.ts"
   },
   "keywords": [
     "spacepay",
@@ -52,6 +53,7 @@
     "jest": "^30.0.5",
     "prettier": "^3.6.2",
     "ts-jest": "^29.4.1",
+    "tsx": "^4.20.3",
     "typescript": "^5.0.0"
   },
   "repository": {

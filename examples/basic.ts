@@ -2,9 +2,10 @@ import { SpacePayClient } from '../src'
 
 // Initialize the client
 const client = new SpacePayClient({
-  baseUrl: 'https://api.spacepay.com',
-  publicKey: 'your_public_key_here',
-  secretKey: 'your_secret_key_here',
+  baseUrl: 'http://localhost:3005',
+  publicKey: 'pk_test_cdf274c69ca18dfed5503a05972723d8',
+  secretKey:
+    'sk_test_313a0981e789e1cbcef07296101b79a3c3e6f828f50cca742d0be8f9072fb8b2',
   config: {
     timeoutMs: 30000,
   },
@@ -14,7 +15,7 @@ async function example() {
   try {
     // Create a new payment
     const payment = await client.createPayment({
-      amount: '50.00',
+      amount: 5000, // 5000 cents = $50.00
       currency: 'USDC',
       chainId: 1, // Ethereum mainnet
       orderId: 'order_123',
@@ -35,6 +36,7 @@ async function example() {
     console.log('Transaction hash:', status.txHash)
     console.log('Received amount:', status.receivedAmount)
   } catch (error) {
+    console.log(error)
     if (error instanceof Error) {
       console.error('Error:', error.message)
     } else {

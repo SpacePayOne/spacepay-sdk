@@ -30,7 +30,7 @@ async function integrationTest() {
     // Test 1: Create a payment
     console.log('\n📝 Test 1: Creating payment...')
     const payment = await client.createPayment({
-      amount: '0.01', // Small amount for testing
+      amount: 1, // 1 cent = $0.01 for testing
       currency: 'USDC',
       chainId: 1, // Ethereum mainnet
       orderId: `test_${Date.now()}`, // Unique order ID

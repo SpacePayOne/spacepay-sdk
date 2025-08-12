@@ -8,7 +8,7 @@ export type PaymentStatus =
   | 'partially_refunded'
 
 export interface CreatePaymentRequest {
-  amount: string // decimal string, e.g. "50.00"
+  amount: number // amount in cents, e.g. 5000 for $50.00
   currency: string // e.g. "USDC"
   chainId: number
   orderId: string
@@ -26,7 +26,7 @@ export interface PaymentStatusResponse {
   status: PaymentStatus
   txHash: string | null
   receivedAmount: {
-    amount: string
+    amount: number // amount in cents, e.g. 5000 for $50.00
     amountMinor: string
     currency: string
     decimals: number
