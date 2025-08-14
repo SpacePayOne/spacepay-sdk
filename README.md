@@ -31,10 +31,8 @@ const client = new SpacePayClient({
 // Create a payment
 const payment = await client.createPayment({
   amount: 5000, // 5000 cents = $50.00
-  currency: 'USDC',
-  chainId: 1, // Ethereum mainnet
+  currency: 'USD',
   orderId: 'order_123',
-  returnUrl: 'https://myapp.com/success',
 })
 
 console.log('Payment created:', payment.paymentId)
@@ -60,19 +58,14 @@ interface ClientOptions {
 ```typescript
 interface CreatePaymentRequest {
   amount: number // Amount in cents, e.g. 5000 for $50.00
-  currency: string // Currency code, e.g. "USDC"
-  chainId: number // Blockchain network ID
+  currency: string // Currency code, e.g. "USD"
   orderId: string // Your internal order ID
-  metadata?: Record<string, any> // Optional metadata
-  returnUrl?: string // URL to redirect after payment
 }
 
 const payment = await client.createPayment({
   amount: 10000, // 10000 cents = $100.00
-  currency: 'USDC',
-  chainId: 1,
+  currency: 'USD',
   orderId: 'order_456',
-  metadata: { customerId: 'cust_123' },
 })
 ```
 

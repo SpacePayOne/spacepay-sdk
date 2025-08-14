@@ -31,25 +31,18 @@ async function integrationTest() {
     console.log('\n📝 Test 1: Creating payment...')
     const payment = await client.createPayment({
       amount: 1, // 1 cent = $0.01 for testing
-      currency: 'USDC',
-      chainId: 1, // Ethereum mainnet
+      currency: 'USD',
       orderId: `test_${Date.now()}`, // Unique order ID
-      metadata: {
-        test: true,
-        timestamp: new Date().toISOString(),
-        environment: 'integration-test',
-      },
-      returnUrl: 'https://example.com/success',
     })
 
     console.log('✅ Payment created successfully')
-    console.log('   Payment ID:', payment.paymentId)
+    console.log('   Payment ID:', payment.id)
     console.log('   Payment Address:', payment.paymentAddress)
     console.log('   Expiration:', payment.expiration)
 
     // Test 2: Get payment status
     console.log('\n📊 Test 2: Getting payment status...')
-    const status = await client.getPaymentStatus(payment.paymentId)
+    const status = await client.getPaymentStatus(payment.id)
 
     console.log('✅ Payment status retrieved')
     console.log('   Status:', status.status)
@@ -60,7 +53,7 @@ async function integrationTest() {
     console.log('\n⏳ Test 3: Waiting 5 seconds and checking status again...')
     await new Promise((resolve) => setTimeout(resolve, 5000))
 
-    const statusAfterWait = await client.getPaymentStatus(payment.paymentId)
+    const statusAfterWait = await client.getPaymentStatus(payment.id)
     console.log('✅ Status after wait:', statusAfterWait.status)
 
     console.log('\n🎉 All integration tests passed!')

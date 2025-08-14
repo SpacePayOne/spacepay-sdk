@@ -9,15 +9,12 @@ export type PaymentStatus =
 
 export interface CreatePaymentRequest {
   amount: number // amount in cents, e.g. 5000 for $50.00
-  currency: string // e.g. "USDC"
-  chainId: number
+  currency: 'USD' // e.g. "USD"
   orderId: string
-  metadata?: Record<string, any>
-  returnUrl?: string
 }
 
 export interface CreatePaymentResponse {
-  paymentId: string
+  id: string
   paymentAddress: string
   expiration: string // ISO
 }

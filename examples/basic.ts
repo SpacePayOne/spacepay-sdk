@@ -15,26 +15,20 @@ async function example() {
   try {
     // Create a new payment
     const payment = await client.createPayment({
-      amount: 5000, // 5000 cents = $50.00
-      currency: 'USDC',
-      chainId: 1, // Ethereum mainnet
+      amount: 100, // 100 cents = $1.00
+      currency: 'USD',
       orderId: 'order_123',
-      metadata: {
-        customerId: 'cust_456',
-        description: 'Premium subscription',
-      },
-      returnUrl: 'https://myapp.com/success',
     })
 
-    console.log('Payment created:', payment)
-    console.log('Payment ID:', payment.paymentId)
-    console.log('Payment address:', payment.paymentAddress)
+    console.log('Payment:', payment)
+    console.log('Payment:', JSON.stringify(payment, null, 4))
 
     // Check payment status
-    const status = await client.getPaymentStatus(payment.paymentId)
-    console.log('Payment status:', status.status)
-    console.log('Transaction hash:', status.txHash)
-    console.log('Received amount:', status.receivedAmount)
+    const paymentDetails = await client.getPaymentStatus(payment.id)
+    console.log('Payment details:', paymentDetails)
+    console.log('Payment status:', paymentDetails.status)
+    console.log('Transaction hash:', paymentDetails.txHash)
+    console.log('Received amount:', paymentDetails.receivedAmount)
   } catch (error) {
     console.log(error)
     if (error instanceof Error) {

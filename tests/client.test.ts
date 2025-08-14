@@ -78,12 +78,9 @@ describe('SpacePayClient', () => {
       } as Response)
 
       const result = await client.createPayment({
-        amount: '50.00',
-        currency: 'USDC',
-        chainId: 1,
+        amount: 5000,
+        currency: 'USD',
         orderId: 'order_123',
-        metadata: { customerId: 'cust_456' },
-        returnUrl: 'https://example.com/success',
       })
 
       expect(result).toEqual(mockResponse)
@@ -97,12 +94,9 @@ describe('SpacePayClient', () => {
             'X-SpacePay-Secret-Key': 'test_public_key',
           }),
           body: JSON.stringify({
-            amount: '50.00',
-            currency: 'USDC',
-            chainId: 1,
+            amount: 5000,
+            currency: 'USD',
             orderId: 'order_123',
-            metadata: { customerId: 'cust_456' },
-            returnUrl: 'https://example.com/success',
           }),
         })
       )
@@ -124,9 +118,8 @@ describe('SpacePayClient', () => {
 
       await expect(
         client.createPayment({
-          amount: '-50.00',
-          currency: 'USDC',
-          chainId: 1,
+          amount: 5000,
+          currency: 'USD',
           orderId: 'order_123',
         })
       ).rejects.toThrow('Bad Request')
