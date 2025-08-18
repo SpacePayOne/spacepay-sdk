@@ -2,6 +2,8 @@ import {
   CreatePaymentRequest,
   CreatePaymentResponse,
   PaymentStatusResponse,
+  CreateQuoteByContractRequest,
+  PaymentQuote,
   ClientOptions,
 } from './types'
 import { ApiError } from './types/errors'
@@ -52,6 +54,39 @@ export class SpacePayClient {
       `/v1/external/payments/${encodeURIComponent(paymentId)}`,
       {
         method: 'GET',
+      }
+    )
+  }
+
+  /**
+   * Get active quotes for a payment
+   */
+  async getActiveQuotes(paymentId: string): Promise<PaymentQuote[]> {
+    if (!paymentId) throw new Error('paymentId required')
+    return this.request<PaymentQuote[]>(
+      `/v1/external/payments/${encodeURIComponent(paymentId)}/quotes`,
+      {
+        method: 'GET',
+      }
+    )
+  }
+
+  /**
+   * Create or update a quote by contract address and chain
+   */
+  async createOrUpdateQuote(
+    paymentId: string,
+    body: CreateQuoteByContractRequest
+  ): Promise<PaymentQuote> {
+    if (!paymentId) throw new Error('paymentId required')
+    if (!body.contractAddress) throw new Error('contractAddress required')
+    if (!body.chainId) throw new Error('chainId required')
+
+    return this.request<PaymentQuote>(
+      `/v1/external/payments/${encodeURIComponent(paymentId)}/quotes`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
       }
     )
   }
