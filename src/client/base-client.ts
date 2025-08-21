@@ -49,7 +49,7 @@ export abstract class BaseSpacePayClient {
       if (!res.ok) {
         const reqId =
           typeof maybeJson === 'object' && maybeJson && 'requestId' in maybeJson
-            ? String((maybeJson as any).requestId)
+            ? String((maybeJson as { requestId: string }).requestId)
             : undefined
         throw new ApiError(
           `HTTP ${res.status} ${res.statusText}`,
@@ -59,13 +59,13 @@ export abstract class BaseSpacePayClient {
         )
       }
 
-      return typeof maybeJson === 'undefined' ? ({} as any) : (maybeJson as T)
-    } catch (err: any) {
-      if (err.name === 'AbortError') {
+      return typeof maybeJson === 'undefined' ? ({} as T) : (maybeJson as T)
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === 'AbortError') {
         throw new ApiError('Request timeout', undefined)
       }
       if (err instanceof ApiError) throw err
-      throw new ApiError(err?.message ?? 'Network error')
+      throw new ApiError(err instanceof Error ? err.message : 'Network error')
     } finally {
       clearTimeout(t)
     }
