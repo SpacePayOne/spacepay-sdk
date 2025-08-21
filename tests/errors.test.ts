@@ -9,7 +9,7 @@ describe('ApiError', () => {
     expect(error.message).toBe('Test error message')
     expect(error.name).toBe('ApiError')
     expect(error.status).toBeUndefined()
-    expect(error.data).toBeUndefined()
+    expect(error.body).toBeUndefined()
     expect(error.requestId).toBeUndefined()
   })
 
@@ -18,7 +18,7 @@ describe('ApiError', () => {
 
     expect(error.message).toBe('Bad Request')
     expect(error.status).toBe(400)
-    expect(error.data).toBeUndefined()
+    expect(error.body).toBeUndefined()
     expect(error.requestId).toBeUndefined()
   })
 
@@ -28,7 +28,7 @@ describe('ApiError', () => {
 
     expect(error.message).toBe('Validation failed')
     expect(error.status).toBe(422)
-    expect(error.data).toEqual(errorData)
+    expect(error.body).toEqual(errorData)
     expect(error.requestId).toBeUndefined()
   })
 
@@ -37,7 +37,7 @@ describe('ApiError', () => {
 
     expect(error.message).toBe('Server error')
     expect(error.status).toBe(500)
-    expect(error.data).toBeUndefined()
+    expect(error.body).toBeUndefined()
     expect(error.requestId).toBe('req_12345')
   })
 
@@ -47,7 +47,7 @@ describe('ApiError', () => {
 
     expect(error.message).toBe('Too many requests')
     expect(error.status).toBe(429)
-    expect(error.data).toEqual(errorData)
+    expect(error.body).toEqual(errorData)
     expect(error.requestId).toBe('req_67890')
   })
 

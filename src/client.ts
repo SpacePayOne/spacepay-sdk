@@ -38,11 +38,14 @@ export class SpacePayClient {
     opts?: { idempotencyKey?: string }
   ): Promise<CreatePaymentResponse> {
     const idem = opts?.idempotencyKey ?? uuid()
-    return this.request<CreatePaymentResponse>('/v1/external/payments', {
-      method: 'POST',
-      headers: { 'Idempotency-Key': idem },
-      body: JSON.stringify(body),
-    })
+    return this.request<CreatePaymentResponse>(
+      '/v1/external/secretkey-auth/payments',
+      {
+        method: 'POST',
+        headers: { 'Idempotency-Key': idem },
+        body: JSON.stringify(body),
+      }
+    )
   }
 
   /**
@@ -51,7 +54,7 @@ export class SpacePayClient {
   async getPaymentStatus(paymentId: string): Promise<PaymentStatusResponse> {
     if (!paymentId) throw new Error('paymentId required')
     return this.request<PaymentStatusResponse>(
-      `/v1/external/payments/${encodeURIComponent(paymentId)}`,
+      `/v1/external/secretkey-auth/payments/${encodeURIComponent(paymentId)}`,
       {
         method: 'GET',
       }

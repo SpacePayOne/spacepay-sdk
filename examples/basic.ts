@@ -3,8 +3,8 @@ import { SpacePayClient, Currency } from '../src'
 // Initialize the client
 const client = new SpacePayClient({
   // TODO: do we need to define base url here?
-  // baseUrl: 'http://localhost:3005',
-  baseUrl: 'https://lobster-app-ovz3a.ondigitalocean.app',
+  baseUrl: 'http://localhost:3005',
+  // baseUrl: 'https://lobster-app-ovz3a.ondigitalocean.app',
   // TODO: remove from git and database after internal testing
   publicKey: 'pk_test_cdf274c69ca18dfed5503a05972723d8',
   // TODO: remove from git and database after internal testing
@@ -23,12 +23,15 @@ async function example() {
       orderId: 'order_123',
       amount: 100, // 100 cents = $1.00
       currency: Currency.USD,
+      redirectUrl: 'https://merchant.example.com/checkout/success',
+      customMetadata: '{"cartId":"abc123","promo":"SUMMER24"}',
     })
 
     console.log('Payment:', payment)
-    console.log('Payment:', JSON.stringify(payment, null, 4))
+    console.log('Payment URL:', payment.paymentUrl)
+    console.log('Payment Secret:', payment.secret)
 
-    const paymentId = payment.id
+    const paymentId = payment.paymentId
     // const paymentId = '29b8b410-5f1f-417f-88db-4b168593982b'
 
     // Check payment status

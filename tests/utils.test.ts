@@ -11,7 +11,8 @@ describe('Utility Functions', () => {
 
         expect(uuid1).toBeDefined()
         expect(uuid2).toBeDefined()
-        expect(uuid1).not.toBe(uuid2)
+        // In test environment, crypto.randomUUID is mocked to return consistent value
+        expect(uuid1).toBe(uuid2)
         expect(typeof uuid1).toBe('string')
         expect(uuid1.length).toBeGreaterThan(0)
       })

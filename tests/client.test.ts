@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals'
 import { SpacePayClient } from '../src/client'
+import { Currency } from '../src/types'
 import { ApiError } from '../src/types/errors'
 
 describe('SpacePayClient', () => {
@@ -79,19 +80,20 @@ describe('SpacePayClient', () => {
 
       const result = await client.createPayment({
         amount: 5000,
-        currency: 'USD',
+        currency: Currency.USD,
         orderId: 'order_123',
       })
 
       expect(result).toEqual(mockResponse)
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://api.spacepay.com/v1/payments',
+        'https://api.spacepay.com/v1/external/secretkey-auth/payments',
         expect.objectContaining({
           method: 'POST',
           headers: expect.objectContaining({
             'Content-Type': 'application/json',
-            Authorization: 'Bearer test_secret_key',
-            'X-SpacePay-Secret-Key': 'test_public_key',
+            'X-SpacePay-Access-Key': 'test_public_key',
+            'X-SpacePay-Secret-Key': 'test_secret_key',
+            'Idempotency-Key': expect.any(String),
           }),
           body: JSON.stringify({
             amount: 5000,
@@ -119,7 +121,7 @@ describe('SpacePayClient', () => {
       await expect(
         client.createPayment({
           amount: 5000,
-          currency: 'USD',
+          currency: Currency.USD,
           orderId: 'order_123',
         })
       ).rejects.toThrow('Bad Request')
@@ -152,12 +154,13 @@ describe('SpacePayClient', () => {
 
       expect(result).toEqual(mockResponse)
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://api.spacepay.com/v1/external/payments/pay_123',
+        'https://api.spacepay.com/v1/external/secretkey-auth/payments/pay_123',
         expect.objectContaining({
           method: 'GET',
           headers: expect.objectContaining({
-            Authorization: 'Bearer test_secret_key',
-            'X-SpacePay-Secret-Key': 'test_public_key',
+            'Content-Type': 'application/json',
+            'X-SpacePay-Access-Key': 'test_public_key',
+            'X-SpacePay-Secret-Key': 'test_secret_key',
           }),
         })
       )

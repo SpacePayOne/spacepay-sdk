@@ -23,6 +23,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "type-check": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.{ts,js}\" \"examples/**/*.{ts,js}\"",
     "format:check": "prettier --check \"src/**/*.{ts,js}\" \"examples/**/*.{ts,js}\"",
     "lint": "eslint \"src/**/*.ts\" \"examples/**/*.ts\"",

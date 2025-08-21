@@ -18,17 +18,48 @@ export interface CreatePaymentRequest {
   orderId: string
   amount: number // amount in cents, e.g. 5000 for $50.00
   currency: Currency // e.g. "USD"
+  redirectUrl?: string // URL to redirect after successful payment
+  customMetadata?: string // Arbitrary metadata for redirect URL query string
 }
 
 export interface CreatePaymentResponse {
+  paymentUrl: string // URL of the payment screen
+  secret: string // Secret of the payment
+  paymentId: string // Payment ID
+  payment: PaymentDto // Payment object
+}
+
+// New DTO structure matching the API updates
+export interface CreatePaymentRequestDto {
+  orderId: string
+  amount: number // amount in cents, e.g. 100 for $1.00
+  currency: Currency
+  redirectUrl?: string
+  customMetadata?: string
+}
+
+export interface CreatePaymentResponseDto {
+  paymentUrl: string
+  secret: string
+  paymentId: string
+  payment: PaymentDto
+}
+
+export interface PaymentDto {
   id: string
   merchantId: string
   amountInCents: number
   currency: Currency
   status: PaymentStatus
-  depositAddress: DepositAddress
+  depositAddress: DepositAddress | null
   quotes: PaymentQuote[]
-  createdAt: Date
+  receipt: PaymentReceiptDto | null
+  createdAt: string
+}
+
+export interface PaymentStatusDto {
+  id: string
+  status: PaymentStatus
 }
 
 export interface PaymentStatusResponse {
@@ -50,6 +81,11 @@ export interface CreateQuoteByContractRequest {
   chainId: number
 }
 
+export interface CreateQuoteByContractDto {
+  contractAddress: string
+  chainId: number
+}
+
 export interface PaymentQuote {
   id: string
   paymentId: string
@@ -62,6 +98,20 @@ export interface PaymentQuote {
   createdAt: Date
 }
 
+export interface PaymentReceiptDto {
+  paymentId: string
+  selectedQuote: PaymentQuote
+  settledToken: Token
+  settledChain: ChainDto
+  settledAmountAsset: string
+  settledAmountUsd: string
+  txHash: string | null
+  txBlockNumber: number | null
+  txTimestamp: string | null
+  txSenderAddress: string | null
+  createdAt: string
+}
+
 export interface DepositAddress {
   id: string
   paymentId: string
@@ -70,15 +120,52 @@ export interface DepositAddress {
   createdAt: Date
 }
 
-export interface Token {
-  // Placeholder - will be updated when TokenDto structure is provided
-  id: string
-  contractAddress: string
-  chainId: number
-  symbol: string
-  decimals: number
+// Token-related enums
+export enum TokenType {
+  STABLECOIN = 'stablecoin',
+  VOLATILE = 'volatile',
 }
 
-// Placeholder enums - will be updated when actual values are provided
-export type DepositAddressType = string
-export type QuoteStatus = string
+export enum AssetType {
+  NATIVE = 'native',
+  ERC20 = 'erc20',
+}
+
+export enum TokenStatus {
+  ACTIVE = 'active',
+  DEPRECATED = 'deprecated',
+  BLOCKED = 'blocked',
+}
+
+// Chain DTO interface
+export interface ChainDto {
+  chainId: number
+  name: string
+  nativeSymbol: string
+  nativeDecimals: number
+  isEnabled: boolean
+}
+
+export interface Token {
+  id: string
+  coingeckoApiId: string
+  chain: ChainDto
+  symbol: string
+  contractAddress: string
+  decimals: number
+  type: TokenType
+  assetType: AssetType
+  status: TokenStatus
+  tokenPriceUsd: number | null
+}
+
+// Deposit address and quote status enums
+export enum DepositAddressType {
+  EVM = 'EVM',
+}
+
+export enum QuoteStatus {
+  ACTIVE = 'active',
+  EXPIRED = 'expired',
+  USED = 'used',
+}
