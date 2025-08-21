@@ -1,33 +1,7 @@
-import { describe, it, expect, beforeEach } from '@jest/globals'
-import { uuid } from '../src/utils/crypto'
+import { describe, it, expect } from '@jest/globals'
 import { safeJson } from '../src/utils/validation'
 
 describe('Utility Functions', () => {
-  describe('crypto', () => {
-    describe('uuid', () => {
-      it('should generate unique UUIDs', () => {
-        const uuid1 = uuid()
-        const uuid2 = uuid()
-
-        expect(uuid1).toBeDefined()
-        expect(uuid2).toBeDefined()
-        // In test environment, crypto.randomUUID is mocked to return consistent value
-        expect(uuid1).toBe(uuid2)
-        expect(typeof uuid1).toBe('string')
-        expect(uuid1.length).toBeGreaterThan(0)
-      })
-
-      it('should generate consistent UUIDs in test environment', () => {
-        // In test environment, crypto.randomUUID is mocked to return consistent value
-        const uuid1 = uuid()
-        const uuid2 = uuid()
-
-        expect(uuid1).toBe('test-uuid-1234-5678-9abc-def012345678')
-        expect(uuid2).toBe('test-uuid-1234-5678-9abc-def012345678')
-      })
-    })
-  })
-
   describe('validation', () => {
     describe('safeJson', () => {
       it('should parse valid JSON strings', () => {

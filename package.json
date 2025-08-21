@@ -64,5 +64,8 @@
   "bugs": {
     "url": "https://github.com/spacepay/spacepay-client-sdk/issues"
   },
-  "homepage": "https://github.com/spacepay/spacepay-client-sdk#readme"
+  "homepage": "https://github.com/spacepay/spacepay-client-sdk#readme",
+  "dependencies": {
+    "uuid": "^11.1.0"
+  }
 }

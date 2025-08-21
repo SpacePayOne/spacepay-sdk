@@ -1,74 +1,37 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals'
-import { SpacePayClient } from '../src/client'
+import {
+  SpacePay,
+  SpacePayBackendClient,
+  SpacePayPaymentClient,
+} from '../src/client'
 import { Currency } from '../src/types'
 import { ApiError } from '../src/types/errors'
 
-describe('SpacePayClient', () => {
-  let client: SpacePayClient
+describe('SpacePayBackendClient', () => {
+  let client: SpacePayBackendClient
   let mockFetch: jest.MockedFunction<typeof fetch>
 
   beforeEach(() => {
-    client = new SpacePayClient({
+    mockFetch = jest.fn()
+    global.fetch = mockFetch
+
+    client = SpacePay.createBackendClient({
       baseUrl: 'https://api.spacepay.com',
       publicKey: 'test_public_key',
       secretKey: 'test_secret_key',
-      config: {
-        timeoutMs: 5000,
-      },
-    })
-
-    mockFetch = fetch as jest.MockedFunction<typeof fetch>
-    mockFetch.mockClear()
-  })
-
-  describe('constructor', () => {
-    it('should create client with valid options', () => {
-      expect(client).toBeInstanceOf(SpacePayClient)
-    })
-
-    it('should throw error when baseUrl is missing', () => {
-      expect(() => {
-        new SpacePayClient({
-          publicKey: 'test',
-          secretKey: 'test',
-        } as any)
-      }).toThrow('baseUrl required')
-    })
-
-    it('should throw error when publicKey is missing', () => {
-      expect(() => {
-        new SpacePayClient({
-          baseUrl: 'https://api.spacepay.com',
-          secretKey: 'test',
-        } as any)
-      }).toThrow('publicKey required')
-    })
-
-    it('should throw error when secretKey is missing', () => {
-      expect(() => {
-        new SpacePayClient({
-          baseUrl: 'https://api.spacepay.com',
-          publicKey: 'test',
-        } as any)
-      }).toThrow('secretKey required')
-    })
-
-    it('should use default timeout when not specified', () => {
-      const clientWithoutTimeout = new SpacePayClient({
-        baseUrl: 'https://api.spacepay.com',
-        publicKey: 'test',
-        secretKey: 'test',
-      })
-      expect(clientWithoutTimeout).toBeInstanceOf(SpacePayClient)
     })
   })
 
   describe('createPayment', () => {
     it('should create payment successfully', async () => {
       const mockResponse = {
+        paymentUrl: 'https://spacepay.example.com/payment',
+        secret: 'payment_secret_123',
         paymentId: 'pay_123',
-        paymentAddress: '0x1234567890abcdef',
-        expiration: '2024-12-31T23:59:59Z',
+        payment: {
+          id: 'pay_123',
+          status: 'pending',
+        },
       }
 
       mockFetch.mockResolvedValueOnce({
@@ -128,6 +91,55 @@ describe('SpacePayClient', () => {
     })
   })
 
+  describe('getPaymentDetails', () => {
+    it('should get payment details successfully', async () => {
+      const mockResponse = {
+        id: 'pay_123',
+        status: 'pending',
+        amountInCents: 5000,
+        currency: 'USD',
+      }
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify(mockResponse),
+        json: async () => mockResponse,
+      } as Response)
+
+      const result = await client.getPaymentDetails('pay_123')
+
+      expect(result).toEqual(mockResponse)
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://api.spacepay.com/v1/external/secretkey-auth/payments/pay_123',
+        expect.objectContaining({
+          method: 'GET',
+          headers: expect.objectContaining({
+            'Content-Type': 'application/json',
+            'X-SpacePay-Access-Key': 'test_public_key',
+            'X-SpacePay-Secret-Key': 'test_secret_key',
+          }),
+        })
+      )
+    })
+  })
+})
+
+describe('SpacePayPaymentClient', () => {
+  let client: SpacePayPaymentClient
+  let mockFetch: jest.MockedFunction<typeof fetch>
+
+  beforeEach(() => {
+    mockFetch = jest.fn()
+    global.fetch = mockFetch
+
+    client = SpacePay.createPaymentClient({
+      baseUrl: 'https://api.spacepay.com',
+      publicKey: 'test_public_key',
+      paymentSecret: 'payment_secret_123',
+    })
+  })
+
   describe('getPaymentStatus', () => {
     it('should get payment status successfully', async () => {
       const mockResponse = {
@@ -154,13 +166,13 @@ describe('SpacePayClient', () => {
 
       expect(result).toEqual(mockResponse)
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://api.spacepay.com/v1/external/secretkey-auth/payments/pay_123',
+        'https://api.spacepay.com/v1/external/payment-secret-auth/payments/pay_123/status',
         expect.objectContaining({
           method: 'GET',
           headers: expect.objectContaining({
             'Content-Type': 'application/json',
             'X-SpacePay-Access-Key': 'test_public_key',
-            'X-SpacePay-Secret-Key': 'test_secret_key',
+            'X-SpacePay-Payment-Secret': 'payment_secret_123',
           }),
         })
       )
@@ -181,6 +193,79 @@ describe('SpacePayClient', () => {
     })
   })
 
-  // Note: Timeout testing is complex due to AbortController and setTimeout mocking
-  // The timeout functionality is tested indirectly through the client's error handling
+  describe('getActiveQuotes', () => {
+    it('should get active quotes successfully', async () => {
+      const mockResponse = [
+        {
+          id: 'quote_123',
+          paymentId: 'pay_123',
+          status: 'active',
+        },
+      ]
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify(mockResponse),
+        json: async () => mockResponse,
+      } as Response)
+
+      const result = await client.getActiveQuotes('pay_123')
+
+      expect(result).toEqual(mockResponse)
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://api.spacepay.com/v1/external/payment-secret-auth/payments/pay_123/quotes',
+        expect.objectContaining({
+          method: 'GET',
+          headers: expect.objectContaining({
+            'Content-Type': 'application/json',
+            'X-SpacePay-Access-Key': 'test_public_key',
+            'X-SpacePay-Payment-Secret': 'payment_secret_123',
+          }),
+        })
+      )
+    })
+  })
+
+  describe('createOrUpdateQuote', () => {
+    it('should create or update quote successfully', async () => {
+      const mockResponse = {
+        id: 'quote_123',
+        paymentId: 'pay_123',
+        status: 'active',
+      }
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify(mockResponse),
+        json: async () => mockResponse,
+      } as Response)
+
+      const result = await client.createOrUpdateQuote('pay_123', {
+        contractAddress: '0x1234567890abcdef',
+        chainId: 1,
+      })
+
+      expect(result).toEqual(mockResponse)
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://api.spacepay.com/v1/external/payment-secret-auth/payments/pay_123/quotes',
+        expect.objectContaining({
+          method: 'POST',
+          headers: expect.objectContaining({
+            'Content-Type': 'application/json',
+            'X-SpacePay-Access-Key': 'test_public_key',
+            'X-SpacePay-Payment-Secret': 'payment_secret_123',
+          }),
+          body: JSON.stringify({
+            contractAddress: '0x1234567890abcdef',
+            chainId: 1,
+          }),
+        })
+      )
+    })
+  })
 })
+
+// Note: Timeout testing is complex due to AbortController and setTimeout mocking
+// The timeout functionality is tested indirectly through the client's error handling

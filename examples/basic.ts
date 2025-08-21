@@ -1,25 +1,23 @@
-import { SpacePayClient, Currency } from '../src'
-
-// Initialize the client
-const client = new SpacePayClient({
-  // TODO: do we need to define base url here?
-  baseUrl: 'http://localhost:3005',
-  // baseUrl: 'https://lobster-app-ovz3a.ondigitalocean.app',
-  // TODO: remove from git and database after internal testing
-  publicKey: 'pk_test_cdf274c69ca18dfed5503a05972723d8',
-  // TODO: remove from git and database after internal testing
-  secretKey:
-    'sk_test_aa331dea5f9f9ca7e07102728f0a6a1c36130f268db93f66cbbc60cbe9822216',
-  config: {
-    timeoutMs: 30000,
-  },
-})
+import { SpacePay, Currency } from '../src'
 
 async function example() {
   try {
-    console.log(Currency.USD)
-    // Create a new payment
-    const payment = await client.createPayment({
+    // TODO: Replace with your own values
+    const BASE_URL = 'http://localhost:3005'
+    const PUBLIC_KEY = 'pk_test_cdf274c69ca18dfed5503a05972723d8'
+    const SECRET_KEY =
+      'sk_test_aa331dea5f9f9ca7e07102728f0a6a1c36130f268db93f66cbbc60cbe9822216'
+
+    // Create a backend client for merchant operations
+    const backendClient = SpacePay.createBackendClient({
+      baseUrl: BASE_URL,
+      publicKey: PUBLIC_KEY,
+      secretKey: SECRET_KEY,
+      timeoutMs: 30000,
+    })
+
+    // Create a new payment using backend client
+    const payment = await backendClient.createPayment({
       orderId: 'order_123',
       amount: 100, // 100 cents = $1.00
       currency: Currency.USD,
@@ -32,28 +30,35 @@ async function example() {
     console.log('Payment Secret:', payment.secret)
 
     const paymentId = payment.paymentId
-    // const paymentId = '29b8b410-5f1f-417f-88db-4b168593982b'
 
-    // Check payment status
-    const paymentDetails = await client.getPaymentStatus(paymentId)
+    // Create a payment client for frontend operations
+    const paymentClient = SpacePay.createPaymentClient({
+      baseUrl: BASE_URL,
+      publicKey: PUBLIC_KEY,
+      paymentSecret: payment.secret,
+      timeoutMs: 30000,
+    })
+
+    // Check payment status using payment client
+    const paymentDetails = await paymentClient.getPaymentStatus(paymentId)
     console.log('Payment details:', paymentDetails)
     console.log('Payment status:', paymentDetails.status)
     console.log('Transaction hash:', paymentDetails.txHash)
     console.log('Received amount:', paymentDetails.receivedAmount)
 
-    // Get active quotes for the payment
-    const quotes = await client.getActiveQuotes(paymentId)
+    // Get active quotes for the payment using payment client
+    const quotes = await paymentClient.getActiveQuotes(paymentId)
     console.log('Active quotes:', quotes)
 
-    // Create or update a quote for a specific token
-    const quote = await client.createOrUpdateQuote(paymentId, {
+    // Create or update a quote for a specific token using payment client
+    const quote = await paymentClient.createOrUpdateQuote(paymentId, {
       contractAddress: '0x0000000000000000000000000000000000000000',
       chainId: 11155111, // Ethereum Sepolia
     })
     console.log('Updated quote:', quote)
 
-    // Get active quotes for the payment
-    const quotes2 = await client.getActiveQuotes(paymentId)
+    // Get active quotes for the payment again
+    const quotes2 = await paymentClient.getActiveQuotes(paymentId)
     console.log('Active quotes:', quotes2)
   } catch (error) {
     console.log(error)

@@ -1,6 +1,10 @@
 // Main entry point for SpacePay Client SDK
-import { SpacePayClient } from './client'
-export { SpacePayClient } from './client'
+export {
+  SpacePay,
+  SpacePayBackendClient,
+  SpacePayPaymentClient,
+  SpacePayConfig,
+} from './client'
 export { ApiError } from './types/errors'
 export {
   Currency,
@@ -24,8 +28,4 @@ export type {
   DepositAddress,
   Token,
   ChainDto,
-  ClientOptions,
 } from './types'
-
-// Default export
-export default SpacePayClient

@@ -1,4 +1,4 @@
-import { Currency, SpacePayClient } from '../src'
+import { SpacePay, Currency } from '../src'
 
 /**
  * Integration test example for SpacePay Client SDK
@@ -22,14 +22,18 @@ async function integrationTest() {
   console.log('🚀 Starting SpacePay Client SDK Integration Test')
   console.log('='.repeat(50))
 
-  // Initialize client
-  const client = new SpacePayClient(config)
-  console.log('✅ Client initialized')
+  // Initialize backend client
+  const backendClient = SpacePay.createBackendClient({
+    baseUrl: config.baseUrl,
+    publicKey: config.publicKey,
+    secretKey: config.secretKey,
+  })
+  console.log('✅ Backend client initialized')
 
   try {
     // Test 1: Create a payment
     console.log('\n📝 Test 1: Creating payment...')
-    const payment = await client.createPayment({
+    const payment = await backendClient.createPayment({
       amount: 1, // 1 cent = $0.01 for testing
       currency: Currency.USD,
       orderId: `test_${Date.now()}`, // Unique order ID
@@ -42,20 +46,38 @@ async function integrationTest() {
     console.log('   Payment URL:', payment.paymentUrl)
     console.log('   Payment Secret:', payment.secret)
 
-    // Test 2: Get payment status
-    console.log('\n📊 Test 2: Getting payment status...')
-    const status = await client.getPaymentStatus(payment.paymentId)
+    // Test 2: Get payment details using backend client
+    console.log('\n📊 Test 2: Getting payment details...')
+    const paymentDetails = await backendClient.getPaymentDetails(
+      payment.paymentId
+    )
+
+    console.log('✅ Payment details retrieved')
+    console.log('   Payment ID:', paymentDetails.id)
+    console.log('   Status:', paymentDetails.status)
+
+    // Test 3: Create payment client for frontend operations
+    console.log('\n🔐 Test 3: Creating payment client...')
+    const paymentClient = SpacePay.createPaymentClient({
+      baseUrl: config.baseUrl,
+      publicKey: config.publicKey,
+      paymentSecret: payment.secret,
+    })
+
+    // Test 4: Get payment status using payment client
+    console.log('\n📊 Test 4: Getting payment status...')
+    const status = await paymentClient.getPaymentStatus(payment.paymentId)
 
     console.log('✅ Payment status retrieved')
     console.log('   Status:', status.status)
-    console.log('   Chain ID:', status.chainId)
-    console.log('   Token Address:', status.tokenAddress)
 
-    // Test 3: Wait and check status again (to see if it changes)
-    console.log('\n⏳ Test 3: Waiting 5 seconds and checking status again...')
+    // Test 5: Wait and check status again (to see if it changes)
+    console.log('\n⏳ Test 5: Waiting 5 seconds and checking status again...')
     await new Promise((resolve) => setTimeout(resolve, 5000))
 
-    const statusAfterWait = await client.getPaymentStatus(payment.paymentId)
+    const statusAfterWait = await paymentClient.getPaymentStatus(
+      payment.paymentId
+    )
     console.log('✅ Status after wait:', statusAfterWait.status)
 
     console.log('\n🎉 All integration tests passed!')

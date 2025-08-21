@@ -54,7 +54,7 @@ export interface PaymentDto {
   depositAddress: DepositAddress | null
   quotes: PaymentQuote[]
   receipt: PaymentReceiptDto | null
-  createdAt: string
+  createdAt: Date
 }
 
 export interface PaymentStatusDto {
