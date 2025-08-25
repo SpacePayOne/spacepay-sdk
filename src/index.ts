@@ -28,3 +28,4 @@ export type {
   Token,
   ChainDto,
 } from './types'
+export * from './utils'

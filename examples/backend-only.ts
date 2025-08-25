@@ -1,4 +1,4 @@
-import { SpacePay, Currency } from '../src'
+import { SpacePay, Currency, formatUnits } from '../src'
 
 async function example() {
   try {
@@ -28,11 +28,19 @@ async function example() {
       redirectUrl: 'https://merchant.example.com/checkout/success',
       customMetadata: '{"cartId":"abc123","promo":"SUMMER24"}',
     })
+    const defaultQuote = payment.payment.quotes[0]
 
     console.log('Payment:', payment)
     console.log('Payment URL:', payment.paymentUrl)
     console.log('Payment Secret:', payment.secret)
     console.log('Payment ID:', payment.paymentId)
+    console.log(
+      `Please send ${formatUnits(
+        defaultQuote.expectedAmountAsset,
+        defaultQuote.token.decimals
+      )} ${defaultQuote.token.symbol} to: ${payment.payment.depositAddress?.address}`
+    )
+    console.log('All done!')
   } catch (error) {
     console.log(error)
     if (error instanceof Error) {

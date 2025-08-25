@@ -1,5 +1,5 @@
 import { URL } from 'node:url'
-import { SpacePay, Currency } from '../src'
+import { SpacePay, Currency, formatUnits } from '../src'
 
 async function example() {
   try {
@@ -72,10 +72,13 @@ async function example() {
     const quotes2 = await paymentClient.getActiveQuotes(paymentId)
     console.log('Active quotes:', quotes2)
 
-    console.log('All done!')
     console.log(
-      `Please send ${quote.expectedAmountAsset} ${quote.token.symbol} to: ${paymentDetails.depositAddress?.address}`
+      `Please send ${formatUnits(
+        quote.expectedAmountAsset,
+        quote.token.decimals
+      )} ${quote.token.symbol} to: ${paymentDetails.depositAddress?.address}`
     )
+    console.log('All done!')
   } catch (error) {
     console.log(error)
     if (error instanceof Error) {

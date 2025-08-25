@@ -67,6 +67,7 @@
   },
   "homepage": "https://github.com/spacepay/spacepay-client-sdk#readme",
   "dependencies": {
+    "@ethersproject/units": "^5.8.0",
     "uuid": "^11.1.0"
   }
 }
