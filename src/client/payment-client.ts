@@ -1,9 +1,10 @@
-import { BaseSpacePayClient, SpacePayConfig } from './base-client'
+import { BaseSpacePayClient } from './base-client'
+import type { SpacePayConfig } from './base-client'
 import {
   CreateQuoteByContractRequest,
   PaymentQuote,
-  PaymentStatusResponse,
   PaymentDto,
+  PaymentStatusDto,
 } from '../types'
 
 /**
@@ -35,9 +36,9 @@ export class SpacePayPaymentClient extends BaseSpacePayClient {
   /**
    * Get payment status using payment secret
    */
-  async getPaymentStatus(paymentId: string): Promise<PaymentStatusResponse> {
+  async getPaymentStatus(paymentId: string): Promise<PaymentStatusDto> {
     if (!paymentId) throw new Error('paymentId required')
-    return this.request<PaymentStatusResponse>(
+    return this.request<PaymentStatusDto>(
       `/v1/external/payment-secret-auth/payments/${encodeURIComponent(paymentId)}/status`,
       {
         method: 'GET',

@@ -3,8 +3,8 @@ export {
   SpacePay,
   SpacePayBackendClient,
   SpacePayPaymentClient,
-  SpacePayConfig,
 } from './client'
+export type { SpacePayConfig } from './client'
 export { ApiError } from './types/errors'
 export {
   Currency,
@@ -18,7 +18,6 @@ export type {
   PaymentStatus,
   CreatePaymentRequest,
   CreatePaymentResponse,
-  PaymentStatusResponse,
   CreateQuoteByContractRequest,
   CreateQuoteByContractDto,
   PaymentQuote,

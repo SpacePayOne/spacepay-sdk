@@ -74,17 +74,9 @@ const payment = await client.createPayment({
 ```typescript
 const status = await client.getPaymentStatus('payment_id_here')
 
-interface PaymentStatusResponse {
+interface PaymentStatusDto {
+  id: string
   status: PaymentStatus
-  txHash: string | null
-  receivedAmount: {
-    amount: string
-    amountMinor: string
-    currency: string
-    decimals: number
-  }
-  chainId: number
-  tokenAddress: string | null
 }
 ```
 

@@ -62,19 +62,6 @@ export interface PaymentStatusDto {
   status: PaymentStatus
 }
 
-export interface PaymentStatusResponse {
-  status: PaymentStatus
-  txHash: string | null
-  receivedAmount: {
-    amount: number // amount in cents, e.g. 5000 for $50.00
-    amountMinor: string
-    currency: string
-    decimals: number
-  }
-  chainId: number
-  tokenAddress: string | null
-}
-
 // Payment Quotes Types
 export interface CreateQuoteByContractRequest {
   contractAddress: string

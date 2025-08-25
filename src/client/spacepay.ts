@@ -1,6 +1,6 @@
 import { SpacePayBackendClient } from './backend-client'
 import { SpacePayPaymentClient } from './payment-client'
-import { SpacePayConfig } from './base-client'
+import type { SpacePayConfig } from './base-client'
 
 /**
  * Main SpacePay class with static factory methods

@@ -1,9 +1,15 @@
+import { URL } from 'node:url'
 import { SpacePay, Currency } from '../src'
 
 async function example() {
   try {
+    // ------------------------------------------------------------
+    // Backend
+    // ------------------------------------------------------------
+
     // TODO: Replace with your own values
-    const BASE_URL = 'http://localhost:3005'
+    // const BASE_URL = 'http://localhost:3005'
+    const BASE_URL = 'https://lobster-app-ovz3a.ondigitalocean.app'
     const PUBLIC_KEY = 'pk_test_cdf274c69ca18dfed5503a05972723d8'
     const SECRET_KEY =
       'sk_test_aa331dea5f9f9ca7e07102728f0a6a1c36130f268db93f66cbbc60cbe9822216'
@@ -13,11 +19,10 @@ async function example() {
       baseUrl: BASE_URL,
       publicKey: PUBLIC_KEY,
       secretKey: SECRET_KEY,
-      timeoutMs: 30000,
     })
 
     // Create a new payment using backend client
-    const payment = await backendClient.createPayment({
+    const backendPayment = await backendClient.createPayment({
       orderId: 'order_123',
       amount: 100, // 100 cents = $1.00
       currency: Currency.USD,
@@ -25,26 +30,32 @@ async function example() {
       customMetadata: '{"cartId":"abc123","promo":"SUMMER24"}',
     })
 
-    console.log('Payment:', payment)
-    console.log('Payment URL:', payment.paymentUrl)
-    console.log('Payment Secret:', payment.secret)
+    console.log('Payment URL:', backendPayment.paymentUrl)
 
-    const paymentId = payment.paymentId
+    // ------------------------------------------------------------
+    // Frontend
+    // ------------------------------------------------------------
+
+    // parse payment url
+    const paymentUrl = new URL(backendPayment.paymentUrl)
+    const paymentId = paymentUrl.searchParams.get('paymentId')!
+    const paymentSecret = paymentUrl.searchParams.get('secret')!
 
     // Create a payment client for frontend operations
     const paymentClient = SpacePay.createPaymentClient({
       baseUrl: BASE_URL,
       publicKey: PUBLIC_KEY,
-      paymentSecret: payment.secret,
-      timeoutMs: 30000,
+      paymentSecret,
     })
 
     // Check payment status using payment client
-    const paymentDetails = await paymentClient.getPaymentStatus(paymentId)
+    const paymentStatus = await paymentClient.getPaymentStatus(paymentId)
+    console.log('Payment status:', paymentStatus.status)
+
+    // Get payment details using payment client
+    const paymentDetails = await paymentClient.getPaymentDetails(paymentId)
     console.log('Payment details:', paymentDetails)
-    console.log('Payment status:', paymentDetails.status)
-    console.log('Transaction hash:', paymentDetails.txHash)
-    console.log('Received amount:', paymentDetails.receivedAmount)
+    console.log('Deposit address:', paymentDetails.depositAddress?.address)
 
     // Get active quotes for the payment using payment client
     const quotes = await paymentClient.getActiveQuotes(paymentId)
@@ -60,6 +71,11 @@ async function example() {
     // Get active quotes for the payment again
     const quotes2 = await paymentClient.getActiveQuotes(paymentId)
     console.log('Active quotes:', quotes2)
+
+    console.log('All done!')
+    console.log(
+      `Please send ${quote.expectedAmountAsset} ${quote.token.symbol} to: ${paymentDetails.depositAddress?.address}`
+    )
   } catch (error) {
     console.log(error)
     if (error instanceof Error) {

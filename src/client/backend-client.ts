@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
-import { BaseSpacePayClient, SpacePayConfig } from './base-client'
-import {
+import { BaseSpacePayClient } from './base-client'
+import type { SpacePayConfig } from './base-client'
+import type {
   CreatePaymentRequest,
   CreatePaymentResponse,
   PaymentDto,

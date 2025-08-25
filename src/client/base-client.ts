@@ -2,7 +2,7 @@ import { ApiError } from '../types/errors'
 import { safeJson } from '../utils/validation'
 
 // Base configuration interface
-export interface SpacePayConfig {
+export type SpacePayConfig = {
   baseUrl: string
   publicKey: string
   timeoutMs?: number | undefined

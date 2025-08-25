@@ -28,7 +28,8 @@
     "format:check": "prettier --check \"src/**/*.{ts,js}\" \"examples/**/*.{ts,js}\"",
     "lint": "eslint \"src/**/*.ts\" \"examples/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" \"examples/**/*.ts\" --fix",
-    "run:example": "tsx examples/basic.ts"
+    "run:example:full": "tsx examples/full.ts",
+    "run:example:backend": "tsx examples/backend-only.ts"
   },
   "keywords": [
     "spacepay",

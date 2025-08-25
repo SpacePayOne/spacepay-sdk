@@ -2,4 +2,4 @@
 export { SpacePay } from './spacepay'
 export { SpacePayBackendClient } from './backend-client'
 export { SpacePayPaymentClient } from './payment-client'
-export { SpacePayConfig } from './base-client'
+export type { SpacePayConfig } from './base-client'
