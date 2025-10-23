@@ -9,10 +9,9 @@ async function example() {
 
     // TODO: Replace with your own values
     // const BASE_URL = 'http://localhost:3005'
-    const BASE_URL = 'https://lobster-app-ovz3a.ondigitalocean.app'
-    const PUBLIC_KEY = 'pk_test_cdf274c69ca18dfed5503a05972723d8'
-    const SECRET_KEY =
-      'sk_test_aa331dea5f9f9ca7e07102728f0a6a1c36130f268db93f66cbbc60cbe9822216'
+    const BASE_URL = 'base_url_here'
+    const PUBLIC_KEY = 'public_key_here'
+    const SECRET_KEY = 'secret_key_here'
 
     // Create a backend client for merchant operations
     const backendClient = SpacePay.createBackendClient({
