@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SpacePay Embedded Checkout SDK Demo</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 24px;
+        background: #f5f5f5;
+      }
+      .container {
+        max-width: 640px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+      h1 {
+        margin-top: 0;
+        font-size: 1.5rem;
+      }
+      #spacepay-checkout {
+        margin-top: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Embedded Checkout SDK Demo</h1>
+      <p>This page demonstrates using the SpacePay embedded checkout SDK.</p>
+
+      <div id="spacepay-checkout"></div>
+    </div>
+
+    <!-- Load the frontend bundle (exports initEmbeddedCheckout on SpacePaySDK) -->
+    <script src="../dist/spacepay.bundle.js"></script>
+    <script>
+      ;(async function () {
+        if (!window.SpacePaySDK || !window.SpacePaySDK.initEmbeddedCheckout) {
+          console.error('SpacePaySDK.initEmbeddedCheckout not found on global.')
+          return
+        }
+
+        // TODO: replace these with real values from your backend
+        const baseUrl = 'http://localhost:3000'
+        const paymentId = 'payment_id_here'
+        const secret = 'payment_secret_here'
+
+        const checkout = await window.SpacePaySDK.initEmbeddedCheckout({
+          baseUrl,
+          paymentId,
+          secret,
+        })
+
+        checkout.mount('#spacepay-checkout')
+      })()
+    </script>
+  </body>
+</html>

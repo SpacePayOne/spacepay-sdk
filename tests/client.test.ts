@@ -4,7 +4,6 @@ import {
   SpacePayBackendClient,
   SpacePayPaymentClient,
 } from '../src/client'
-import { BaseSpacePayClient } from '../src/client/base-client'
 import { Currency } from '../src/types'
 import { ApiError } from '../src/types/errors'
 

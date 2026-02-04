@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout – SpacePay</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+      }
+      .checkout {
+        max-width: 560px;
+        margin: 0 auto;
+        padding: 24px;
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
+      .checkout h1 {
+        margin: 0 0 8px;
+        font-size: 1.5rem;
+        color: #111;
+      }
+      .checkout .subtitle {
+        margin: 0 0 24px;
+        color: #666;
+        font-size: 0.9rem;
+      }
+      .order-summary {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+      .order-summary h2 {
+        margin: 0 0 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333;
+      }
+      .order-summary .line {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+      }
+      .order-summary .total {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #eee;
+        font-weight: 600;
+      }
+      .payment-section {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+      .payment-section h2 {
+        margin: 0 0 16px;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333;
+      }
+      .payment-inline {
+        position: relative;
+        width: 472px;
+        height: 56px;
+        border-radius: 6px;
+        overflow: hidden;
+      }
+      .payment-inline iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: transparent;
+      }
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+      .modal-backdrop[hidden] {
+        display: none;
+      }
+      .modal-inner {
+        width: 100%;
+        max-width: 480px;
+        height: 80vh;
+        max-height: 560px;
+        background: transparent;
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+      }
+      .modal-backdrop[data-logged-in='true'] .modal-inner {
+        max-width: 560px;
+        height: 90vh;
+        max-height: 720px;
+      }
+      .modal-inner iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: transparent;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="checkout">
+      <h1>Checkout</h1>
+      <p class="subtitle">Complete your payment below.</p>
+
+      <section class="order-summary">
+        <h2>Order summary</h2>
+        <div class="line"><span>Item</span><span>$49.00</span></div>
+        <div class="line"><span>Shipping</span><span>$5.00</span></div>
+        <div class="line total"><span>Total</span><span>$54.00</span></div>
+      </section>
+
+      <section class="payment-section">
+        <h2>Pay with SpacePay</h2>
+        <div id="payment-inline" class="payment-inline">
+          <iframe
+            id="iframe-inline"
+            src="http://localhost:3000/payment-button?paymentId=c8ccec4d-4fa5-44e7-a65c-8ee31abec6b0&secret=c557fa3c64e1fb5b9c3fea5a6be0576d2454b88078856bd0b7dde4869aceb661"
+            title="SpacePay payment"
+          ></iframe>
+        </div>
+      </section>
+    </main>
+
+    <div id="modal" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-label="Login">
+      <div class="modal-inner" onclick="event.stopPropagation()">
+        <iframe id="iframe-modal" src="http://localhost:3000/login" title="SpacePay login"></iframe>
+      </div>
+    </div>
+
+    <script>
+      var modal = document.getElementById('modal')
+      var iframeInline = document.getElementById('iframe-inline')
+
+      function showLoginModal() {
+        modal.hidden = false
+      }
+
+      function hideLoginModal() {
+        modal.hidden = true
+        // iframeInline.src = iframeInline.src
+      }
+
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) hideLoginModal()
+      })
+
+      var allowedOrigins = ['http://localhost:3000', 'https://your-payment-app.com']
+      window.addEventListener('message', function (event) {
+        if (!allowedOrigins.includes(event.origin)) return
+        var data = event.data
+        if (!data || typeof data !== 'object') return
+        console.log('[SpacePay] message from', event.origin, data)
+
+        if (data.type === 'spacepay-request-login') {
+          showLoginModal()
+        }
+        if (data.type === 'spacepay-user-authenticated') {
+          var loggedIn = typeof data.loggedIn === 'boolean' ? data.loggedIn : false
+          if (loggedIn) {
+            hideLoginModal()
+            modal.setAttribute('data-logged-in', 'true')
+          } else {
+            modal.setAttribute('data-logged-in', 'false')
+          }
+        }
+      })
+    </script>
+  </body>
+</html>

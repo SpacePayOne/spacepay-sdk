@@ -10,13 +10,21 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./backend": {
+      "types": "./dist/backend.d.ts",
+      "import": "./dist/backend.js"
+    },
+    "./frontend": {
+      "types": "./dist/frontend.d.ts",
+      "import": "./dist/frontend.js"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "yarn lint && yarn format:check && tsc && yarn bundle",
+    "build": "yarn lint && yarn format:check && tsc && yarn bundle && yarn bundle:full",
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
     "prepublishOnly": "yarn clean && yarn build",
@@ -30,8 +38,9 @@
     "lint:fix": "eslint \"src/**/*.ts\" \"examples/**/*.ts\" --fix",
     "run:example:full": "tsx examples/full.ts",
     "run:example:backend": "tsx examples/backend-only.ts",
-    "bundle": "esbuild src/index.ts --bundle --format=iife --global-name=SpacePaySDK --outfile=dist/spacepay.bundle.js --minify",
-    "bundle:dev": "esbuild src/index.ts --bundle --format=iife --global-name=SpacePaySDK --outfile=dist/spacepay.bundle.js"
+    "bundle": "esbuild src/frontend.ts --bundle --format=iife --global-name=SpacePaySDK --outfile=dist/spacepay.bundle.js --minify",
+    "bundle:dev": "esbuild src/frontend.ts --bundle --format=iife --global-name=SpacePaySDK --outfile=dist/spacepay.bundle.js",
+    "bundle:full": "esbuild src/index.ts --bundle --format=iife --global-name=SpacePaySDK --outfile=dist/spacepay-full.bundle.js --minify"
   },
   "keywords": [
     "spacepay",

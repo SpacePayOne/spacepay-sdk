@@ -1,4 +1,4 @@
-import { SpacePay, Currency, formatUnits } from '../src'
+import SpacePay, { Currency, formatUnits } from '../src'
 
 async function example() {
   try {

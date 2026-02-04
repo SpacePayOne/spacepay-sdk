@@ -16,7 +16,7 @@ A lightweight, TypeScript-first SDK for integrating with SpacePay-like crypto pa
 yarn add spacepay-client-sdk
 ```
 
-## Quick Start
+## Quick Start (Node/backend)
 
 ```typescript
 import { SpacePayClient } from 'spacepay-client-sdk'
@@ -110,9 +110,32 @@ try {
 
 ## Examples
 
-See the `examples/` directory for complete usage examples:
+See the `examples/` directory for complete usage examples.
 
-- [Basic Usage](./examples/basic-usage.ts) - Simple payment creation and status checking
+## Embedded Checkout (frontend)
+
+You can embed the SpacePay checkout UI into your own checkout page in a Stripe-like way using the frontend SDK:
+
+```ts
+import { initEmbeddedCheckout } from 'spacepay-client-sdk/frontend'
+
+const checkout = await initEmbeddedCheckout({
+  baseUrl: 'https://pay.spacepay.com',
+  paymentId: 'payment_id_from_backend',
+  secret: 'payment_secret_from_backend',
+})
+
+checkout.mount('#spacepay-checkout')
+```
+
+This will:
+
+- Render a small inline iframe (e.g. a \"Pay with SpacePay\" button) into the `#spacepay-checkout` container.
+- Listen for messages from the embedded SpacePay UI:
+  - `spacepay-request-login` → opens a centered modal with the SpacePay login/top-up iframe.
+  - `spacepay-user-authenticated` → closes the modal and refreshes the inline iframe.
+
+> The payment-button and login pages are part of the SpacePay frontend and must emit these messages via `window.parent.postMessage`. See `examples/EMBEDDED_PAGE_INSTRUCTIONS.md` for details.
 
 ## Development
 
