@@ -1,5 +1,5 @@
 import { SpacePayBackendClient } from './backend-client'
-import { SpacePayPaymentClient } from './payment-client'
+import { SpacePayCheckoutClient } from './checkout-client'
 import type { SpacePayConfig } from './base-client'
 
 export type BackendClientOptions = {
@@ -9,7 +9,7 @@ export type BackendClientOptions = {
   timeoutMs?: number
 }
 
-export type PaymentClientOptions = {
+export type CheckoutClientOptions = {
   baseUrl: string
   publicKey: string
   paymentSecret: string
@@ -17,36 +17,29 @@ export type PaymentClientOptions = {
 }
 
 /**
- * Main SpacePay class with static factory methods
+ * Create a checkout client for frontend operations using payment secret authentication
  */
-export class SpacePay {
-  /**
-   * Create a backend client for merchant operations using secret key authentication
-   */
-  static createBackendClient(
-    options: BackendClientOptions
-  ): SpacePayBackendClient {
-    const config: SpacePayConfig = {
-      baseUrl: options.baseUrl,
-      publicKey: options.publicKey,
-      timeoutMs: options.timeoutMs,
-    }
-    return new SpacePayBackendClient(config, options.secretKey)
+export function createCheckoutClient(
+  options: CheckoutClientOptions
+): SpacePayCheckoutClient {
+  const config: SpacePayConfig = {
+    baseUrl: options.baseUrl,
+    publicKey: options.publicKey,
+    timeoutMs: options.timeoutMs,
   }
+  return new SpacePayCheckoutClient(config, options.paymentSecret)
+}
 
-  /**
-   * Create a payment client 
-    for frontend operations using
-   payment secret authentication
-   */
-  static createPaymentClient(
-    options: PaymentClientOptions
-  ): SpacePayPaymentClient {
-    const config: SpacePayConfig = {
-      baseUrl: options.baseUrl,
-      publicKey: options.publicKey,
-      timeoutMs: options.timeoutMs,
-    }
-    return new SpacePayPaymentClient(config, options.paymentSecret)
+/**
+ * Create a backend client for merchant operations using secret key authentication
+ */
+export function createBackendClient(
+  options: BackendClientOptions
+): SpacePayBackendClient {
+  const config: SpacePayConfig = {
+    baseUrl: options.baseUrl,
+    publicKey: options.publicKey,
+    timeoutMs: options.timeoutMs,
   }
+  return new SpacePayBackendClient(config, options.secretKey)
 }

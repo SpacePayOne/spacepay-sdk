@@ -1,22 +1,23 @@
 /* eslint-env browser */
-
-/* eslint-env browser */
 /* eslint-disable no-undef */
 
+import {
+  appendModal,
+  createModalIframe,
+  hideModal,
+  removeModal,
+  showModal,
+} from './frontend-modal'
+import { buildUrl } from './utils'
 import type {
   EmbeddedCheckoutInstance,
   EmbeddedCheckoutOptions,
 } from './types/config'
 
-const DEFAULT_INLINE_WIDTH = 400
-const DEFAULT_INLINE_HEIGHT = 56
+const DEFAULT_INLINE_WIDTH = '400px'
+const DEFAULT_INLINE_HEIGHT = '56px'
 const DEFAULT_PAYMENT_BUTTON_PATH = '/payment-button'
 const DEFAULT_LOGIN_PATH = '/login'
-
-function buildUrl(baseUrl: string, path: string): URL {
-  // new URL handles both absolute and relative paths
-  return new URL(path, baseUrl)
-}
 
 async function resolvePaymentContext(
   options: EmbeddedCheckoutOptions
@@ -69,88 +70,51 @@ export async function initEmbeddedCheckout(
 
   const { paymentId, secret } = await resolvePaymentContext(options)
 
-  const paymentButtonUrl = buildUrl(baseUrl, paymentButtonPath)
-  paymentButtonUrl.searchParams.set('paymentId', paymentId)
-  paymentButtonUrl.searchParams.set('secret', secret)
+  const paymentButtonUrl = buildUrl(baseUrl, paymentButtonPath, {
+    paymentId,
+    secret,
+  })
 
-  const loginUrl = buildUrl(baseUrl, loginPath).toString()
+  const loginUrl = buildUrl(baseUrl, loginPath)
   const allowedOrigins =
     options.allowedOrigins && options.allowedOrigins.length > 0
       ? options.allowedOrigins
       : [buildUrl(baseUrl, '/').origin]
 
-  let inlineIframe: HTMLIFrameElement | null = null
-  let modalBackdrop: HTMLDivElement | null = null
+  let inlineButtonIframe: HTMLIFrameElement | null = null
+  let modalElementLogin: HTMLDivElement | null = null
   let messageHandler: ((event: MessageEvent) => void) | null = null
-  let mounted = false
+  let buttonMounted = false
 
-  function ensureModal() {
-    if (modalBackdrop) return
+  function ensureLoginModal() {
+    if (modalElementLogin) return
 
-    const backdrop = document.createElement('div')
-    backdrop.setAttribute('role', 'dialog')
-    backdrop.setAttribute('aria-modal', 'true')
-    backdrop.setAttribute('aria-label', 'SpacePay login')
-    backdrop.style.position = 'fixed'
-    backdrop.style.inset = '0'
-    backdrop.style.background = 'rgba(0, 0, 0, 0.6)'
-    backdrop.style.display = 'flex'
-    backdrop.style.alignItems = 'center'
-    backdrop.style.justifyContent = 'center'
-    backdrop.style.zIndex = '1000'
-    backdrop.style.padding = '24px'
-    backdrop.style.boxSizing = 'border-box'
-    backdrop.hidden = true
-
-    const inner = document.createElement('div')
-    inner.style.width = '100%'
-    inner.style.maxWidth = '480px'
-    inner.style.height = '80vh'
-    inner.style.maxHeight = '560px'
-    inner.style.borderRadius = '8px'
-    inner.style.overflow = 'hidden'
-    inner.style.position = 'relative'
-    inner.style.background = 'transparent'
-
-    const iframe = document.createElement('iframe')
-    iframe.src = loginUrl
-    iframe.title = 'SpacePay login'
-    iframe.style.position = 'absolute'
-    iframe.style.top = '0'
-    iframe.style.left = '0'
-    iframe.style.width = '100%'
-    iframe.style.height = '100%'
-    iframe.style.border = 'none'
-    iframe.style.background = 'transparent'
-
-    inner.appendChild(iframe)
-    backdrop.appendChild(inner)
-    document.body.appendChild(backdrop)
-
-    backdrop.addEventListener('click', (event) => {
-      if (event.target === backdrop) {
-        hideModal()
-      }
+    const modalElement = createModalIframe({
+      src: loginUrl.toString(),
+      title: 'SpacePay Login',
+      ariaLabel: 'SpacePay Login',
+      onBackdropClick: () => {
+        hideLoginModal()
+      },
     })
-
-    modalBackdrop = backdrop
+    hideModal(modalElement)
+    appendModal(modalElement)
+    modalElementLogin = modalElement
   }
 
-  function showModal() {
-    ensureModal()
-    if (!modalBackdrop) return
-    modalBackdrop.hidden = false
-    modalBackdrop.style.display = 'flex'
+  function showLoginModal() {
+    ensureLoginModal()
+    if (!modalElementLogin) return
+    showModal(modalElementLogin)
   }
 
-  function hideModal() {
-    if (!modalBackdrop) return
-    modalBackdrop.hidden = true
-    modalBackdrop.style.display = 'none'
+  function hideLoginModal() {
+    if (!modalElementLogin) return
+    hideModal(modalElementLogin)
     // Refresh the inline iframe so it can pick up any new auth cookies/state.
-    if (inlineIframe) {
+    if (inlineButtonIframe) {
       try {
-        inlineIframe.contentWindow?.location.reload()
+        inlineButtonIframe.contentWindow?.location.reload()
       } catch (_err) {
         // Ignore cross-origin access issues – in worst case the iframe stays as-is.
       }
@@ -165,7 +129,7 @@ export async function initEmbeddedCheckout(
       const data = event.data as unknown
       if (!data || typeof data !== 'object') return
 
-      console.log('[SpacePay] embedded message from', event.origin, data)
+      console.log('[🧑‍🚀 SpacePay SDK] message received:', event.origin, data)
 
       const payload = data as {
         type?: string
@@ -174,7 +138,7 @@ export async function initEmbeddedCheckout(
       }
 
       if (payload.type === 'spacepay-request-login') {
-        showModal()
+        showLoginModal()
         return
       }
 
@@ -182,7 +146,7 @@ export async function initEmbeddedCheckout(
         const loggedIn =
           typeof payload.loggedIn === 'boolean' ? payload.loggedIn : false
         if (loggedIn) {
-          hideModal()
+          hideLoginModal()
         }
       }
     }
@@ -198,7 +162,7 @@ export async function initEmbeddedCheckout(
 
   const instance: EmbeddedCheckoutInstance = {
     mount(container: string | HTMLElement): void {
-      if (mounted) return
+      if (buttonMounted) return
 
       const el =
         typeof container === 'string'
@@ -215,32 +179,32 @@ export async function initEmbeddedCheckout(
       iframe.src = paymentButtonUrl.toString()
       iframe.title = 'SpacePay Payment Button'
       iframe.style.border = 'none'
-      iframe.style.width = `${inlineWidth}px`
-      iframe.style.height = `${inlineHeight}px`
+      iframe.style.width = inlineWidth
+      iframe.style.height = inlineHeight
       iframe.style.background = 'transparent'
 
       // Clear previous content and insert the iframe
       while (el.firstChild) el.removeChild(el.firstChild)
       el.appendChild(iframe)
 
-      inlineIframe = iframe
+      inlineButtonIframe = iframe
       installMessageHandler()
-      mounted = true
+      buttonMounted = true
     },
 
     unmount(): void {
-      mounted = false
+      buttonMounted = false
       removeMessageHandler()
 
-      if (inlineIframe && inlineIframe.parentNode) {
-        inlineIframe.parentNode.removeChild(inlineIframe)
+      if (inlineButtonIframe && inlineButtonIframe.parentNode) {
+        inlineButtonIframe.parentNode.removeChild(inlineButtonIframe)
       }
-      inlineIframe = null
+      inlineButtonIframe = null
 
-      if (modalBackdrop && modalBackdrop.parentNode) {
-        modalBackdrop.parentNode.removeChild(modalBackdrop)
+      if (modalElementLogin) {
+        removeModal(modalElementLogin)
       }
-      modalBackdrop = null
+      modalElementLogin = null
     },
   }
 

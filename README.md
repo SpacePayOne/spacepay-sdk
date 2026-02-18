@@ -13,16 +13,15 @@ A lightweight, TypeScript-first SDK for integrating with SpacePay-like crypto pa
 ## Installation
 
 ```bash
-yarn add spacepay-client-sdk
+yarn add @spacepay/client-sdk
 ```
 
-## Quick Start (Node/backend)
+## Backend (Node.js)
 
 ```typescript
-import { SpacePayClient } from 'spacepay-client-sdk'
+import { createBackendClient } from '@spacepay/client-sdk/backend'
 
-// Initialize the client
-const client = new SpacePayClient({
+const client = createBackendClient({
   baseUrl: 'https://api.spacepay.com',
   publicKey: 'your_public_key_here',
   secretKey: 'your_secret_key_here',
@@ -90,34 +89,29 @@ interface PaymentStatusDto {
 - `refunded` - Payment was refunded
 - `partially_refunded` - Partial refund issued
 
-### Error Handling
+## Frontend (TypeScript / bundlers)
 
-```typescript
-import { ApiError } from 'spacepay-client-sdk'
-
-try {
-  const payment = await client.createPayment(request)
-} catch (error) {
-  if (error instanceof ApiError) {
-    console.error('API Error:', error.message)
-    console.error('Status:', error.status)
-    console.error('Request ID:', error.requestId)
-  } else {
-    console.error('Unexpected error:', error)
-  }
-}
-```
-
-## Examples
-
-See the `examples/` directory for complete usage examples.
-
-## Embedded Checkout (frontend)
-
-You can embed the SpacePay checkout UI into your own checkout page in a Stripe-like way using the frontend SDK:
+Use the frontend entry for browser-safe usage (no secret key) and embedded checkout:
 
 ```ts
-import { initEmbeddedCheckout } from 'spacepay-client-sdk/frontend'
+import {
+  createCheckoutClient,
+  initEmbeddedCheckout,
+} from '@spacepay/client-sdk/frontend'
+
+const paymentClient = createCheckoutClient({
+  baseUrl: 'https://api.spacepay.com',
+  publicKey: 'pk_...',
+  paymentSecret: 'ps_...',
+})
+```
+
+### Embedded Checkout
+
+You can embed the SpacePay checkout UI into your own checkout page in a Stripe-like way:
+
+```ts
+import { initEmbeddedCheckout } from '@spacepay/client-sdk/frontend'
 
 const checkout = await initEmbeddedCheckout({
   baseUrl: 'https://pay.spacepay.com',
@@ -136,6 +130,27 @@ This will:
   - `spacepay-user-authenticated` → closes the modal and refreshes the inline iframe.
 
 > The payment-button and login pages are part of the SpacePay frontend and must emit these messages via `window.parent.postMessage`. See `examples/EMBEDDED_PAGE_INSTRUCTIONS.md` for details.
+
+## CDN / Browser (global)
+
+If you prefer a `<script>` tag, you can use the prebuilt browser bundle:
+
+```html
+<script src="https://cdn.example.com/@spacepay/client-sdk/spacepay.bundle.js"></script>
+<script>
+  (async function () {
+    const checkout = await window.SpacePaySDK.initEmbeddedCheckout({
+      baseUrl: 'https://pay.spacepay.com',
+      paymentId: '...',
+      secret: '...',
+    })
+
+    checkout.mount('#spacepay-checkout')
+  })()
+</script>
+```
+
+The same bundle also exposes `SpacePaySDK.createBackendClient` and `SpacePaySDK.createCheckoutClient` for browser-based integrations that call your backend.
 
 ## Development
 

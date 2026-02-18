@@ -10,10 +10,6 @@ export enum Currency {
   USD = 'USD',
 }
 
-// Payment limits
-export const MIN_SUPPORTED_PAYMENT_AMOUNT = 1_00 // 1 USD
-export const MAX_SUPPORTED_PAYMENT_AMOUNT = 1_000_000_00 // 1,000,000 USD
-
 export interface CreatePaymentRequest {
   orderId: string
   amount: number // amount in cents, e.g. 5000 for $50.00

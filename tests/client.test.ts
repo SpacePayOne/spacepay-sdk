@@ -1,9 +1,5 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals'
-import {
-  SpacePay,
-  SpacePayBackendClient,
-  SpacePayPaymentClient,
-} from '../src/client'
+import SpacePay, { SpacePayBackendClient, SpacePayCheckoutClient } from '../src'
 import { Currency } from '../src/types'
 import { ApiError } from '../src/types/errors'
 
@@ -457,14 +453,14 @@ describe('SpacePayBackendClient', () => {
 })
 
 describe('SpacePayPaymentClient', () => {
-  let client: SpacePayPaymentClient
+  let client: SpacePayCheckoutClient
   let mockFetch: jest.MockedFunction<typeof fetch>
 
   beforeEach(() => {
     mockFetch = jest.fn()
     global.fetch = mockFetch
 
-    client = SpacePay.createPaymentClient({
+    client = SpacePay.createCheckoutClient({
       baseUrl: 'https://api.spacepay.com',
       publicKey: 'test_public_key',
       paymentSecret: 'payment_secret_123',
@@ -474,21 +470,21 @@ describe('SpacePayPaymentClient', () => {
   describe('constructor validation', () => {
     it('should throw error when paymentSecret is missing', () => {
       expect(() => {
-        new SpacePayPaymentClient(
+        new SpacePayCheckoutClient(
           { baseUrl: 'https://api.com', publicKey: 'key' },
           ''
         )
       }).toThrow('paymentSecret required')
 
       expect(() => {
-        new SpacePayPaymentClient(
+        new SpacePayCheckoutClient(
           { baseUrl: 'https://api.com', publicKey: 'key' },
           null as any
         )
       }).toThrow('paymentSecret required')
 
       expect(() => {
-        new SpacePayPaymentClient(
+        new SpacePayCheckoutClient(
           { baseUrl: 'https://api.com', publicKey: 'key' },
           undefined as any
         )
@@ -778,26 +774,26 @@ describe('SpacePay', () => {
     })
   })
 
-  describe('createPaymentClient', () => {
+  describe('createCheckoutClient', () => {
     it('should create payment client with required options', () => {
-      const client = SpacePay.createPaymentClient({
+      const client = SpacePay.createCheckoutClient({
         baseUrl: 'https://api.spacepay.com',
         publicKey: 'test_public_key',
         paymentSecret: 'payment_secret_123',
       })
 
-      expect(client).toBeInstanceOf(SpacePayPaymentClient)
+      expect(client).toBeInstanceOf(SpacePayCheckoutClient)
     })
 
     it('should create payment client with custom timeout', () => {
-      const client = SpacePay.createPaymentClient({
+      const client = SpacePay.createCheckoutClient({
         baseUrl: 'https://api.spacepay.com',
         publicKey: 'test_public_key',
         paymentSecret: 'payment_secret_123',
         timeoutMs: 45000,
       })
 
-      expect(client).toBeInstanceOf(SpacePayPaymentClient)
+      expect(client).toBeInstanceOf(SpacePayCheckoutClient)
     })
   })
 })

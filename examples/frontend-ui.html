@@ -173,7 +173,7 @@
         if (!allowedOrigins.includes(event.origin)) return
         var data = event.data
         if (!data || typeof data !== 'object') return
-        console.log('[SpacePay] message from', event.origin, data)
+        console.log('[SpacePay SDK] message received:', event.origin, data)
 
         if (data.type === 'spacepay-request-login') {
           showLoginModal()

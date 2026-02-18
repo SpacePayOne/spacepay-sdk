@@ -1,5 +1,5 @@
 {
-  "name": "spacepay-client-sdk",
+  "name": "@spacepay/client-sdk",
   "version": "1.0.0",
   "type": "module",
   "description": "Lightweight SDK for SpacePay-like API - works in Node 18+ and modern browsers",
@@ -18,6 +18,10 @@
     "./frontend": {
       "types": "./dist/frontend.d.ts",
       "import": "./dist/frontend.js"
+    },
+    "./embedded": {
+      "types": "./dist/frontend-embedded.d.ts",
+      "import": "./dist/frontend-embedded.js"
     }
   },
   "files": [

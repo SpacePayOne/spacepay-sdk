@@ -51,14 +51,14 @@ export interface EmbeddedCheckoutOptions {
   fetchPaymentContext?: () => Promise<{ paymentId: string; secret: string }>
 
   /**
-   * Width of the inline button iframe in pixels. Default: 400.
+   * Width of the inline button iframe. Default: '400px'.
    */
-  inlineWidth?: number
+  inlineWidth?: string
 
   /**
-   * Height of the inline button iframe in pixels. Default: 56.
+   * Height of the inline button iframe. Default: '56px'.
    */
-  inlineHeight?: number
+  inlineHeight?: string
 
   /**
    * Restrict which origins are allowed to postMessage into the host page.
@@ -77,4 +77,21 @@ export interface EmbeddedCheckoutInstance {
    * Remove DOM elements and event listeners associated with this instance.
    */
   unmount(): void
+}
+
+/**
+ * Options for opening the main SpacePay wallet UI in an iframe.
+ */
+export interface EmbeddedWalletOptions {
+  /**
+   * Base URL of the SpacePay wallet frontend, e.g. "https://wallet.spacepay.com".
+   */
+  baseUrl: string
+}
+
+export interface EmbeddedWalletInstance {
+  /**
+   * Close the wallet UI (hides the modal or removes the inline iframe).
+   */
+  close(): void
 }

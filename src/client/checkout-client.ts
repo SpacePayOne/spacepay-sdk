@@ -8,9 +8,9 @@ import {
 } from '../types'
 
 /**
- * Payment client for frontend operations using payment secret authentication
+ * Checkout client for frontend operations using payment secret authentication
  */
-export class SpacePayPaymentClient extends BaseSpacePayClient {
+export class SpacePayCheckoutClient extends BaseSpacePayClient {
   private readonly paymentSecret: string
 
   constructor(config: SpacePayConfig, paymentSecret: string) {

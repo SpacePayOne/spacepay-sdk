@@ -1,7 +1,6 @@
 // Frontend-only entry: payment UI / customer flow. Safe for browser; no secret key.
-import { SpacePay } from './client/spacepay'
-export { SpacePayPaymentClient } from './client/payment-client'
-export { SpacePay } from './client/spacepay'
+export { SpacePayCheckoutClient } from './client/checkout-client'
+export { createCheckoutClient } from './client/spacepay'
 export type { SpacePayConfig } from './client/base-client'
 export { ApiError } from './types/errors'
 export {
@@ -30,23 +29,9 @@ export { initEmbeddedCheckout } from './frontend-embedded'
 export type {
   EmbeddedCheckoutInstance,
   EmbeddedCheckoutOptions,
+  EmbeddedWalletInstance,
+  EmbeddedWalletOptions,
 } from './types/config'
 
-// Convenience helpers on the frontend bundle/global.
-export function createBackendClient(options: {
-  baseUrl: string
-  publicKey: string
-  secretKey: string
-  timeoutMs?: number
-}) {
-  return SpacePay.createBackendClient(options)
-}
-
-export function createPaymentClient(options: {
-  baseUrl: string
-  publicKey: string
-  paymentSecret: string
-  timeoutMs?: number
-}) {
-  return SpacePay.createPaymentClient(options)
-}
+// Embedded wallet helper (modal-only for now)
+export { openWallet } from './frontend-wallet'

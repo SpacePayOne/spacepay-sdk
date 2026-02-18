@@ -1,5 +1,5 @@
 import { URL } from 'node:url'
-import { SpacePay, Currency, formatUnits } from '../src'
+import SpacePay, { Currency, formatUnits } from '../src'
 
 async function example() {
   try {
@@ -41,7 +41,7 @@ async function example() {
     const paymentSecret = paymentUrl.searchParams.get('secret')!
 
     // Create a payment client for frontend operations
-    const paymentClient = SpacePay.createPaymentClient({
+    const paymentClient = SpacePay.createCheckoutClient({
       baseUrl: BASE_URL,
       publicKey: PUBLIC_KEY,
       paymentSecret,
