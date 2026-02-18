@@ -114,9 +114,9 @@ You can embed the SpacePay checkout UI into your own checkout page in a Stripe-l
 import { initEmbeddedCheckout } from '@spacepay/client-sdk/frontend'
 
 const checkout = await initEmbeddedCheckout({
-  baseUrl: 'https://pay.spacepay.com',
+  appBaseUrl: 'https://pay.spacepay.com',
   paymentId: 'payment_id_from_backend',
-  secret: 'payment_secret_from_backend',
+  paymentSecretKey: 'payment_secret_from_backend',
 })
 
 checkout.mount('#spacepay-checkout')
@@ -140,9 +140,9 @@ If you prefer a `<script>` tag, you can use the prebuilt browser bundle:
 <script>
   (async function () {
     const checkout = await window.SpacePaySDK.initEmbeddedCheckout({
-      baseUrl: 'https://pay.spacepay.com',
+      appBaseUrl: 'https://pay.spacepay.com',
       paymentId: '...',
-      secret: '...',
+      paymentSecretKey: '...',
     })
 
     checkout.mount('#spacepay-checkout')

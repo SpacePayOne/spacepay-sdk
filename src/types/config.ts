@@ -1,5 +1,6 @@
 export interface ClientOptions {
-  baseUrl: string // e.g. "https://api.spacepay.com"
+  /** API base URL. Defaults to https://api.app.spacepay.co.uk when omitted. */
+  baseUrl?: string
   publicKey: string // merchant public key (identification)
   secretKey: string // merchant secret key (Bearer auth)
   config?: {
@@ -16,21 +17,9 @@ export interface ClientOptions {
  */
 export interface EmbeddedCheckoutOptions {
   /**
-   * Base URL of the SpacePay frontend, e.g. "https://pay.spacepay.com".
+   * Base URL of the SpacePay frontend app. Defaults to https://app.spacepay.co.uk when omitted.
    */
-  baseUrl: string
-
-  /**
-   * Path for the embedded payment button/page relative to baseUrl.
-   * Defaults to "/payment-button".
-   */
-  paymentButtonPath?: string
-
-  /**
-   * Path for the login/top-up experience relative to baseUrl.
-   * Defaults to "/login".
-   */
-  loginPath?: string
+  appBaseUrl?: string
 
   /**
    * Payment identifier for the checkout flow.
@@ -39,16 +28,19 @@ export interface EmbeddedCheckoutOptions {
   paymentId?: string
 
   /**
-   * Secret/token associated with the payment.
+   * Secret key/token associated with the payment.
    * Either provide this pair directly, or use fetchPaymentContext.
    */
-  secret?: string
+  paymentSecretKey?: string
 
   /**
-   * Optional async callback to retrieve the paymentId/secret pair.
-   * If provided, it takes precedence over the direct paymentId/secret fields.
+   * Optional async callback to retrieve the paymentId/paymentSecretKey pair.
+   * If provided, it takes precedence over the direct paymentId/paymentSecretKey fields.
    */
-  fetchPaymentContext?: () => Promise<{ paymentId: string; secret: string }>
+  fetchPaymentContext?: () => Promise<{
+    paymentId: string
+    paymentSecretKey: string
+  }>
 
   /**
    * Width of the inline button iframe. Default: '400px'.
@@ -59,12 +51,6 @@ export interface EmbeddedCheckoutOptions {
    * Height of the inline button iframe. Default: '56px'.
    */
   inlineHeight?: string
-
-  /**
-   * Restrict which origins are allowed to postMessage into the host page.
-   * Defaults to [new URL(baseUrl).origin].
-   */
-  allowedOrigins?: string[]
 }
 
 export interface EmbeddedCheckoutInstance {

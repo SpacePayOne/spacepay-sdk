@@ -1,6 +1,7 @@
 /* eslint-env browser */
 /* eslint-disable no-undef */
 
+import { DEFAULT_APP_BASE_URL } from './defaults'
 import {
   appendModal,
   createModalIframe,
@@ -16,29 +17,30 @@ import type {
 
 const DEFAULT_INLINE_WIDTH = '400px'
 const DEFAULT_INLINE_HEIGHT = '56px'
-const DEFAULT_PAYMENT_BUTTON_PATH = '/payment-button'
-const DEFAULT_LOGIN_PATH = '/login'
 
 async function resolvePaymentContext(
   options: EmbeddedCheckoutOptions
-): Promise<{ paymentId: string; secret: string }> {
+): Promise<{ paymentId: string; paymentSecretKey: string }> {
   if (options.fetchPaymentContext) {
     const ctx = await options.fetchPaymentContext()
-    if (!ctx || !ctx.paymentId || !ctx.secret) {
+    if (!ctx || !ctx.paymentId || !ctx.paymentSecretKey) {
       throw new Error(
-        'SpacePay embedded checkout: fetchPaymentContext must return { paymentId, secret }'
+        'SpacePay embedded checkout: fetchPaymentContext must return { paymentId, paymentSecretKey }'
       )
     }
     return ctx
   }
 
-  if (!options.paymentId || !options.secret) {
+  if (!options.paymentId || !options.paymentSecretKey) {
     throw new Error(
-      'SpacePay embedded checkout: provide paymentId & secret or fetchPaymentContext'
+      'SpacePay embedded checkout: provide paymentId & paymentSecretKey or fetchPaymentContext'
     )
   }
 
-  return { paymentId: options.paymentId, secret: options.secret }
+  return {
+    paymentId: options.paymentId,
+    paymentSecretKey: options.paymentSecretKey,
+  }
 }
 
 /**
@@ -46,9 +48,9 @@ async function resolvePaymentContext(
  *
  * Example:
  *   const checkout = await initEmbeddedCheckout({
- *     baseUrl: 'https://pay.spacepay.com',
+ *     appBaseUrl: 'https://pay.spacepay.com',
  *     paymentId: '...',
- *     secret: '...',
+ *     paymentSecretKey: '...',
  *   })
  *
  *   checkout.mount('#spacepay-checkout')
@@ -56,30 +58,19 @@ async function resolvePaymentContext(
 export async function initEmbeddedCheckout(
   options: EmbeddedCheckoutOptions
 ): Promise<EmbeddedCheckoutInstance> {
-  const {
-    baseUrl,
-    paymentButtonPath = DEFAULT_PAYMENT_BUTTON_PATH,
-    loginPath = DEFAULT_LOGIN_PATH,
-    inlineWidth = DEFAULT_INLINE_WIDTH,
-    inlineHeight = DEFAULT_INLINE_HEIGHT,
-  } = options
+  const appBaseUrl = options.appBaseUrl ?? DEFAULT_APP_BASE_URL
+  const inlineWidth = options.inlineWidth ?? DEFAULT_INLINE_WIDTH
+  const inlineHeight = options.inlineHeight ?? DEFAULT_INLINE_HEIGHT
 
-  if (!baseUrl) {
-    throw new Error('SpacePay embedded checkout: baseUrl is required')
-  }
+  const { paymentId, paymentSecretKey } = await resolvePaymentContext(options)
 
-  const { paymentId, secret } = await resolvePaymentContext(options)
-
-  const paymentButtonUrl = buildUrl(baseUrl, paymentButtonPath, {
+  const paymentButtonUrl = buildUrl(appBaseUrl, '/payment-button', {
     paymentId,
-    secret,
+    secret: paymentSecretKey,
   })
 
-  const loginUrl = buildUrl(baseUrl, loginPath)
-  const allowedOrigins =
-    options.allowedOrigins && options.allowedOrigins.length > 0
-      ? options.allowedOrigins
-      : [buildUrl(baseUrl, '/').origin]
+  const loginUrl = buildUrl(appBaseUrl, '/login')
+  const allowedOrigins = [buildUrl(appBaseUrl, '/').origin]
 
   let inlineButtonIframe: HTMLIFrameElement | null = null
   let modalElementLogin: HTMLDivElement | null = null

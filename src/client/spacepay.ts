@@ -3,14 +3,16 @@ import { SpacePayCheckoutClient } from './checkout-client'
 import type { SpacePayConfig } from './base-client'
 
 export type BackendClientOptions = {
-  baseUrl: string
+  /** API base URL. Defaults to https://api.app.spacepay.co.uk when omitted. */
+  baseUrl?: string | undefined
   publicKey: string
   secretKey: string
   timeoutMs?: number
 }
 
 export type CheckoutClientOptions = {
-  baseUrl: string
+  /** API base URL. Defaults to https://api.app.spacepay.co.uk when omitted. */
+  baseUrl?: string | undefined
   publicKey: string
   paymentSecret: string
   timeoutMs?: number

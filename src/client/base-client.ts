@@ -1,9 +1,10 @@
+import { DEFAULT_API_BASE_URL } from '../defaults'
 import { ApiError } from '../types/errors'
 import { safeJson } from '../utils/validation'
 
 // Base configuration interface
 export type SpacePayConfig = {
-  baseUrl: string
+  baseUrl?: string | undefined
   publicKey: string
   timeoutMs?: number | undefined
 }
@@ -15,9 +16,8 @@ export abstract class BaseSpacePayClient {
   protected readonly timeoutMs: number
 
   constructor(config: SpacePayConfig) {
-    if (!config.baseUrl) throw new Error('baseUrl required')
     if (!config.publicKey) throw new Error('publicKey required')
-    this.baseUrl = config.baseUrl.replace(/\/+$/, '')
+    this.baseUrl = (config.baseUrl ?? DEFAULT_API_BASE_URL).replace(/\/+$/, '')
     this.publicKey = config.publicKey
     this.timeoutMs = config.timeoutMs ?? 30_000
   }
