@@ -1,8 +1,13 @@
 # .github/workflows/release.yml
 name: Release SDK
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   release:
@@ -16,11 +21,9 @@ jobs:
 
       - run: yarn install --frozen-lockfile
       - run: yarn build
+      - run: yarn test
 
-      # Publish to npm
-      - run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm publish --access public --provenance
 
       # Upload IIFE bundles to Cloudflare R2
       - name: Upload to R2
