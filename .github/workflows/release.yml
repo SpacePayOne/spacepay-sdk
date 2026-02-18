@@ -69,7 +69,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          npx wrangler r2 object put spacepay-sdk/v${VERSION}/spacepay.bundle.js --file dist/spacepay.bundle.js --content-type "application/javascript --remote"
-          npx wrangler r2 object put spacepay-sdk/v${VERSION}/spacepay-full.bundle.js --file dist/spacepay-full.bundle.js --content-type "application/javascript --remote"
-          npx wrangler r2 object put spacepay-sdk/latest/spacepay.bundle.js --file dist/spacepay.bundle.js --content-type "application/javascript --remote"
-          npx wrangler r2 object put spacepay-sdk/latest/spacepay-full.bundle.js --file dist/spacepay-full.bundle.js --content-type "application/javascript --remote"
+          npx wrangler r2 object put spacepay-sdk/v${VERSION}/spacepay.bundle.js --file dist/spacepay.bundle.js --content-type "application/javascript" --remote
+          npx wrangler r2 object put spacepay-sdk/v${VERSION}/spacepay-full.bundle.js --file dist/spacepay-full.bundle.js --content-type "application/javascript" --remote
+          npx wrangler r2 object put spacepay-sdk/latest/spacepay.bundle.js --file dist/spacepay.bundle.js --content-type "application/javascript" --remote
+          npx wrangler r2 object put spacepay-sdk/latest/spacepay-full.bundle.js --file dist/spacepay-full.bundle.js --content-type "application/javascript" --remote
