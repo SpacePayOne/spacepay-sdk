@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
   build_and_test:
@@ -44,6 +45,8 @@ jobs:
           name: dist
           path: dist
       - run: npm publish --access public --provenance --ignore-scripts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   upload_r2:
     needs: publish_npm
