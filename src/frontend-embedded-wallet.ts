@@ -4,6 +4,7 @@ import type {
   EmbeddedWalletInstance,
   EmbeddedWalletOptions,
 } from './types/config'
+import { DEFAULT_APP_BASE_URL } from './defaults'
 
 /**
  * Initialize the embedded wallet UI in a modal.
@@ -17,10 +18,7 @@ import type {
 export function initEmbeddedWalletModal(
   options: EmbeddedWalletOptions
 ): EmbeddedWalletInstance {
-  const { appBaseUrl } = options
-  if (!appBaseUrl) {
-    throw new Error('SpacePay embedded wallet: appBaseUrl is required')
-  }
+  const appBaseUrl = options.appBaseUrl ?? DEFAULT_APP_BASE_URL
 
   const walletUrl = buildUrl(appBaseUrl, '/')
   let modalElement: HTMLDivElement | null = createModalIframe({

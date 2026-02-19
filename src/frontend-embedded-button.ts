@@ -47,7 +47,7 @@ export async function initEmbeddedCheckoutButton(
     secret: paymentSecretKey,
   })
 
-  const loginUrl = buildUrl(appBaseUrl, '/login')
+  const loginUrl = buildUrl(appBaseUrl, '/')
   const allowedOrigins = [buildUrl(appBaseUrl, '/').origin]
 
   let inlineButtonIframe: HTMLIFrameElement | null = null
