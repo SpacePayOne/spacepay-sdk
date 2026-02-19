@@ -17,12 +17,12 @@ import type {
 export function initEmbeddedWalletModal(
   options: EmbeddedWalletOptions
 ): EmbeddedWalletInstance {
-  const { baseUrl } = options
-  if (!baseUrl) {
-    throw new Error('SpacePay embedded wallet: baseUrl is required')
+  const { appBaseUrl } = options
+  if (!appBaseUrl) {
+    throw new Error('SpacePay embedded wallet: appBaseUrl is required')
   }
 
-  const walletUrl = buildUrl(baseUrl, '/')
+  const walletUrl = buildUrl(appBaseUrl, '/')
   let modalElement: HTMLDivElement | null = createModalIframe({
     src: walletUrl.toString(),
     title: 'SpacePay Wallet',

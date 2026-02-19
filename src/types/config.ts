@@ -13,7 +13,7 @@ export type PaymentContextSource = {
 
 export interface ClientOptions {
   /** API base URL. Defaults to https://api.app.spacepay.co.uk when omitted. */
-  baseUrl?: string
+  apiBaseUrl?: string
   publicKey: string // merchant public key (identification)
   secretKey: string // merchant secret key (Bearer auth)
   config?: {
@@ -90,9 +90,9 @@ export interface EmbeddedCheckoutInstance {
  */
 export interface EmbeddedWalletOptions {
   /**
-   * Base URL of the SpacePay wallet frontend, e.g. "https://wallet.spacepay.com".
+   * Base URL of the SpacePay wallet/frontend app. Defaults to https://app.spacepay.co.uk when omitted.
    */
-  baseUrl: string
+  appBaseUrl?: string
 }
 
 export interface EmbeddedWalletInstance {

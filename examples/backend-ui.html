@@ -115,8 +115,8 @@
 
       <form id="paymentForm">
         <div class="form-group">
-          <label for="baseUrl">Base URL:</label>
-          <input type="url" id="baseUrl" placeholder="https://lobster-app-ovz3a.ondigitalocean.app" required />
+          <label for="apiBaseUrl">API Base URL:</label>
+          <input type="url" id="apiBaseUrl" placeholder="https://lobster-app-ovz3a.ondigitalocean.app" required />
         </div>
 
         <div class="form-group">
@@ -179,22 +179,22 @@
     <script>
       // Load saved values from localStorage
       function loadSavedValues() {
-        const baseUrl = localStorage.getItem('spacepay_baseUrl') || 'https://lobster-app-ovz3a.ondigitalocean.app'
+        const apiBaseUrl = localStorage.getItem('spacepay_apiBaseUrl') || 'https://lobster-app-ovz3a.ondigitalocean.app'
         const publicKey = localStorage.getItem('spacepay_publicKey') || ''
         const secretKey = localStorage.getItem('spacepay_secretKey') || ''
 
-        document.getElementById('baseUrl').value = baseUrl
+        document.getElementById('apiBaseUrl').value = apiBaseUrl
         document.getElementById('publicKey').value = publicKey
         document.getElementById('secretKey').value = secretKey
       }
 
       // Save values to localStorage
       function saveValues() {
-        const baseUrl = document.getElementById('baseUrl').value
+        const apiBaseUrl = document.getElementById('apiBaseUrl').value
         const publicKey = document.getElementById('publicKey').value
         const secretKey = document.getElementById('secretKey').value
 
-        localStorage.setItem('spacepay_baseUrl', baseUrl)
+        localStorage.setItem('spacepay_apiBaseUrl', apiBaseUrl)
         localStorage.setItem('spacepay_publicKey', publicKey)
         localStorage.setItem('spacepay_secretKey', secretKey)
       }
@@ -226,7 +226,7 @@
           saveValues()
 
           // Get form values
-          const baseUrl = document.getElementById('baseUrl').value
+          const apiBaseUrl = document.getElementById('apiBaseUrl').value
           const publicKey = document.getElementById('publicKey').value
           const secretKey = document.getElementById('secretKey').value
           const orderId = document.getElementById('orderId').value
@@ -242,7 +242,7 @@
           // Create payment using SpacePay SDK
           // Now using the globally available SpacePaySDK object from script tags
           const backendClient = SpacePaySDK.SpacePay.createBackendClient({
-            baseUrl,
+            apiBaseUrl,
             publicKey,
             secretKey,
           })
@@ -299,7 +299,7 @@
         document.getElementById('paymentForm').addEventListener('submit', handleSubmit)
 
         // Auto-save on input change
-        document.getElementById('baseUrl').addEventListener('input', saveValues)
+        document.getElementById('apiBaseUrl').addEventListener('input', saveValues)
         document.getElementById('publicKey').addEventListener('input', saveValues)
         document.getElementById('secretKey').addEventListener('input', saveValues)
       })

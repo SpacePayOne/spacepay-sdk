@@ -4,7 +4,7 @@ import type { SpacePayConfig } from './base-client'
 
 export type BackendClientOptions = {
   /** API base URL. Defaults to https://api.app.spacepay.co.uk when omitted. */
-  baseUrl?: string | undefined
+  apiBaseUrl?: string | undefined
   publicKey: string
   secretKey: string
   timeoutMs?: number
@@ -12,7 +12,7 @@ export type BackendClientOptions = {
 
 export type CheckoutClientOptions = {
   /** API base URL. Defaults to https://api.app.spacepay.co.uk when omitted. */
-  baseUrl?: string | undefined
+  apiBaseUrl?: string | undefined
   publicKey: string
   paymentSecret: string
   timeoutMs?: number
@@ -25,7 +25,7 @@ export function createCheckoutClient(
   options: CheckoutClientOptions
 ): SpacePayCheckoutClient {
   const config: SpacePayConfig = {
-    baseUrl: options.baseUrl,
+    apiBaseUrl: options.apiBaseUrl,
     publicKey: options.publicKey,
     timeoutMs: options.timeoutMs,
   }
@@ -39,7 +39,7 @@ export function createBackendClient(
   options: BackendClientOptions
 ): SpacePayBackendClient {
   const config: SpacePayConfig = {
-    baseUrl: options.baseUrl,
+    apiBaseUrl: options.apiBaseUrl,
     publicKey: options.publicKey,
     timeoutMs: options.timeoutMs,
   }

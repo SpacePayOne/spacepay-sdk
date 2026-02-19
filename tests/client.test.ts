@@ -13,62 +13,62 @@ describe('BaseSpacePayClient', () => {
   })
 
   describe('constructor validation', () => {
-    it('should use default baseUrl when baseUrl is omitted or null/undefined', () => {
+    it('should use default apiBaseUrl when apiBaseUrl is omitted or null/undefined', () => {
       const clientUndef = new SpacePayBackendClient(
-        { baseUrl: undefined as any, publicKey: 'key' },
+        { apiBaseUrl: undefined as any, publicKey: 'key' },
         'secret'
       )
-      expect((clientUndef as any).baseUrl).toBe(DEFAULT_API_BASE_URL)
+      expect((clientUndef as any).apiBaseUrl).toBe(DEFAULT_API_BASE_URL)
 
       const clientNull = new SpacePayBackendClient(
-        { baseUrl: null as any, publicKey: 'key' },
+        { apiBaseUrl: null as any, publicKey: 'key' },
         'secret'
       )
-      expect((clientNull as any).baseUrl).toBe(DEFAULT_API_BASE_URL)
+      expect((clientNull as any).apiBaseUrl).toBe(DEFAULT_API_BASE_URL)
 
       const clientOmitted = new SpacePayBackendClient(
         { publicKey: 'key' },
         'secret'
       )
-      expect((clientOmitted as any).baseUrl).toBe(DEFAULT_API_BASE_URL)
+      expect((clientOmitted as any).apiBaseUrl).toBe(DEFAULT_API_BASE_URL)
     })
 
     it('should throw error when publicKey is missing', () => {
       expect(() => {
         new SpacePayBackendClient(
-          { baseUrl: 'https://api.com', publicKey: '' },
+          { apiBaseUrl: 'https://api.com', publicKey: '' },
           'secret'
         )
       }).toThrow('publicKey required')
 
       expect(() => {
         new SpacePayBackendClient(
-          { baseUrl: 'https://api.com', publicKey: null as any },
+          { apiBaseUrl: 'https://api.com', publicKey: null as any },
           'secret'
         )
       }).toThrow('publicKey required')
 
       expect(() => {
         new SpacePayBackendClient(
-          { baseUrl: 'https://api.com', publicKey: undefined as any },
+          { apiBaseUrl: 'https://api.com', publicKey: undefined as any },
           'secret'
         )
       }).toThrow('publicKey required')
     })
 
-    it('should normalize baseUrl by removing trailing slashes', () => {
+    it('should normalize apiBaseUrl by removing trailing slashes', () => {
       const client = new SpacePayBackendClient(
-        { baseUrl: 'https://api.com///', publicKey: 'key' },
+        { apiBaseUrl: 'https://api.com///', publicKey: 'key' },
         'secret'
       )
 
       // Access protected property for testing
-      expect((client as any).baseUrl).toBe('https://api.com')
+      expect((client as any).apiBaseUrl).toBe('https://api.com')
     })
 
     it('should set default timeout when not provided', () => {
       const client = new SpacePayBackendClient(
-        { baseUrl: 'https://api.com', publicKey: 'key' },
+        { apiBaseUrl: 'https://api.com', publicKey: 'key' },
         'secret'
       )
 
@@ -77,7 +77,7 @@ describe('BaseSpacePayClient', () => {
 
     it('should use custom timeout when provided', () => {
       const client = new SpacePayBackendClient(
-        { baseUrl: 'https://api.com', publicKey: 'key', timeoutMs: 60000 },
+        { apiBaseUrl: 'https://api.com', publicKey: 'key', timeoutMs: 60000 },
         'secret'
       )
 
@@ -90,7 +90,7 @@ describe('BaseSpacePayClient', () => {
 
     beforeEach(() => {
       client = new SpacePayBackendClient(
-        { baseUrl: 'https://api.com', publicKey: 'key' },
+        { apiBaseUrl: 'https://api.com', publicKey: 'key' },
         'secret'
       )
     })
@@ -237,12 +237,12 @@ describe('SpacePayBackendClient', () => {
   let client: SpacePayBackendClient
   let mockFetch: jest.MockedFunction<typeof fetch>
 
-  beforeEach(() => {
+    beforeEach(() => {
     mockFetch = jest.fn()
     global.fetch = mockFetch
 
-    client = SpacePay.createBackendClient({
-      baseUrl: 'https://api.spacepay.com',
+      client = SpacePay.createBackendClient({
+        apiBaseUrl: 'https://api.spacepay.com',
       publicKey: 'test_public_key',
       secretKey: 'test_secret_key',
     })
@@ -252,21 +252,21 @@ describe('SpacePayBackendClient', () => {
     it('should throw error when secretKey is missing', () => {
       expect(() => {
         new SpacePayBackendClient(
-          { baseUrl: 'https://api.com', publicKey: 'key' },
+          { apiBaseUrl: 'https://api.com', publicKey: 'key' },
           ''
         )
       }).toThrow('secretKey required')
 
       expect(() => {
         new SpacePayBackendClient(
-          { baseUrl: 'https://api.com', publicKey: 'key' },
+          { apiBaseUrl: 'https://api.com', publicKey: 'key' },
           null as any
         )
       }).toThrow('secretKey required')
 
       expect(() => {
         new SpacePayBackendClient(
-          { baseUrl: 'https://api.com', publicKey: 'key' },
+          { apiBaseUrl: 'https://api.com', publicKey: 'key' },
           undefined as any
         )
       }).toThrow('secretKey required')
@@ -457,12 +457,12 @@ describe('SpacePayPaymentClient', () => {
   let client: SpacePayCheckoutClient
   let mockFetch: jest.MockedFunction<typeof fetch>
 
-  beforeEach(() => {
+    beforeEach(() => {
     mockFetch = jest.fn()
     global.fetch = mockFetch
 
-    client = SpacePay.createCheckoutClient({
-      baseUrl: 'https://api.spacepay.com',
+      client = SpacePay.createCheckoutClient({
+        apiBaseUrl: 'https://api.spacepay.com',
       publicKey: 'test_public_key',
       paymentSecret: 'payment_secret_123',
     })
@@ -472,21 +472,21 @@ describe('SpacePayPaymentClient', () => {
     it('should throw error when paymentSecret is missing', () => {
       expect(() => {
         new SpacePayCheckoutClient(
-          { baseUrl: 'https://api.com', publicKey: 'key' },
+          { apiBaseUrl: 'https://api.com', publicKey: 'key' },
           ''
         )
       }).toThrow('paymentSecret required')
 
       expect(() => {
         new SpacePayCheckoutClient(
-          { baseUrl: 'https://api.com', publicKey: 'key' },
+          { apiBaseUrl: 'https://api.com', publicKey: 'key' },
           null as any
         )
       }).toThrow('paymentSecret required')
 
       expect(() => {
         new SpacePayCheckoutClient(
-          { baseUrl: 'https://api.com', publicKey: 'key' },
+          { apiBaseUrl: 'https://api.com', publicKey: 'key' },
           undefined as any
         )
       }).toThrow('paymentSecret required')
@@ -755,7 +755,7 @@ describe('SpacePay', () => {
   describe('createBackendClient', () => {
     it('should create backend client with required options', () => {
       const client = SpacePay.createBackendClient({
-        baseUrl: 'https://api.spacepay.com',
+        apiBaseUrl: 'https://api.spacepay.com',
         publicKey: 'test_public_key',
         secretKey: 'test_secret_key',
       })
@@ -765,7 +765,7 @@ describe('SpacePay', () => {
 
     it('should create backend client with custom timeout', () => {
       const client = SpacePay.createBackendClient({
-        baseUrl: 'https://api.spacepay.com',
+        apiBaseUrl: 'https://api.spacepay.com',
         publicKey: 'test_public_key',
         secretKey: 'test_secret_key',
         timeoutMs: 60000,
@@ -778,7 +778,7 @@ describe('SpacePay', () => {
   describe('createCheckoutClient', () => {
     it('should create payment client with required options', () => {
       const client = SpacePay.createCheckoutClient({
-        baseUrl: 'https://api.spacepay.com',
+        apiBaseUrl: 'https://api.spacepay.com',
         publicKey: 'test_public_key',
         paymentSecret: 'payment_secret_123',
       })
@@ -788,7 +788,7 @@ describe('SpacePay', () => {
 
     it('should create payment client with custom timeout', () => {
       const client = SpacePay.createCheckoutClient({
-        baseUrl: 'https://api.spacepay.com',
+        apiBaseUrl: 'https://api.spacepay.com',
         publicKey: 'test_public_key',
         paymentSecret: 'payment_secret_123',
         timeoutMs: 45000,

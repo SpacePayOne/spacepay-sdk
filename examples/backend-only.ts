@@ -14,7 +14,7 @@ async function example() {
 
     // Create a backend client for merchant operations
     const backendClient = SpacePay.createBackendClient({
-      baseUrl: BASE_URL,
+      apiBaseUrl: BASE_URL,
       publicKey: PUBLIC_KEY,
       secretKey: SECRET_KEY,
     })

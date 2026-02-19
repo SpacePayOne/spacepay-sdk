@@ -4,20 +4,23 @@ import { safeJson } from '../utils/validation'
 
 // Base configuration interface
 export type SpacePayConfig = {
-  baseUrl?: string | undefined
+  apiBaseUrl?: string | undefined
   publicKey: string
   timeoutMs?: number | undefined
 }
 
 // Base client class with common functionality
 export abstract class BaseSpacePayClient {
-  protected readonly baseUrl: string
+  protected readonly apiBaseUrl: string
   protected readonly publicKey: string
   protected readonly timeoutMs: number
 
   constructor(config: SpacePayConfig) {
     if (!config.publicKey) throw new Error('publicKey required')
-    this.baseUrl = (config.baseUrl ?? DEFAULT_API_BASE_URL).replace(/\/+$/, '')
+    this.apiBaseUrl = (config.apiBaseUrl ?? DEFAULT_API_BASE_URL).replace(
+      /\/+$/,
+      ''
+    )
     this.publicKey = config.publicKey
     this.timeoutMs = config.timeoutMs ?? 30_000
   }
@@ -26,7 +29,7 @@ export abstract class BaseSpacePayClient {
     path: string,
     init: RequestInit & { headers?: Record<string, string> }
   ): Promise<T> {
-    const url = `${this.baseUrl}${path}`
+    const url = `${this.apiBaseUrl}${path}`
     const controller = new AbortController()
     const t = setTimeout(() => controller.abort(), this.timeoutMs)
 
