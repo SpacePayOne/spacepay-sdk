@@ -1,6 +1,6 @@
 {
   "name": "@spacepay/client-sdk",
-  "version": "1.0.11",
+  "version": "1.0.14",
   "type": "module",
   "description": "Lightweight SDK for SpacePay-like API - works in Node 18+ and modern browsers",
   "main": "dist/index.js",
@@ -61,18 +61,22 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@types/node": "^18.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.39.0",
-    "@typescript-eslint/parser": "^8.39.0",
-    "esbuild": "^0.25.9",
-    "eslint": "^9.33.0",
+    "@types/node": "^18.19.130",
+    "@typescript-eslint/eslint-plugin": "^8.56.0",
+    "@typescript-eslint/parser": "^8.56.0",
+    "esbuild": "^0.27.3",
+    "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.4",
-    "jest": "^30.0.5",
-    "prettier": "^3.6.2",
-    "ts-jest": "^29.4.1",
-    "tsx": "^4.20.3",
-    "typescript": "^5.0.0"
+    "eslint-plugin-prettier": "^5.5.5",
+    "jest": "^30.2.0",
+    "prettier": "^3.8.1",
+    "ts-jest": "^29.4.6",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@ethersproject/units": "^5.8.0",
+    "uuid": "^13.0.0"
   },
   "repository": {
     "type": "git",
@@ -81,9 +85,5 @@
   "bugs": {
     "url": "https://github.com/SpacePayOne/spacepay-sdk/issues"
   },
-  "homepage": "https://github.com/SpacePayOne/spacepay-sdk#readme",
-  "dependencies": {
-    "@ethersproject/units": "^5.8.0",
-    "uuid": "^11.1.0"
-  }
+  "homepage": "https://github.com/SpacePayOne/spacepay-sdk#readme"
 }

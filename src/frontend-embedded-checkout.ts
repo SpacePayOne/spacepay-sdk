@@ -1,6 +1,3 @@
-/* eslint-env browser */
-/* eslint-disable no-undef */
-
 import { DEFAULT_APP_BASE_URL } from './defaults'
 import { createModalIframe, removeModal, appendModal } from './frontend-modal'
 import { buildUrl, resolvePaymentContext } from './utils'

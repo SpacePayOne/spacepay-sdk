@@ -62,6 +62,29 @@ export default [
       'prettier/prettier': 'error',
     },
   },
+  // Browser-only files: add DOM/window globals (replaces deprecated /* eslint-env browser */)
+  {
+    files: [
+      'src/frontend-embedded-button.ts',
+      'src/frontend-embedded-checkout.ts',
+      'src/frontend-embedded-wallet.ts',
+      'src/frontend-modal.ts',
+      'src/utils/url.ts',
+    ],
+    languageOptions: {
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        URL: 'readonly',
+        HTMLElement: 'readonly',
+        HTMLDivElement: 'readonly',
+        HTMLIFrameElement: 'readonly',
+        Element: 'readonly',
+        MessageEvent: 'readonly',
+        Event: 'readonly',
+      },
+    },
+  },
   {
     ignores: ['dist/', 'node_modules/', '*.js', '*.mjs', '*.cjs'],
   },

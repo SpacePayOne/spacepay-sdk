@@ -1,6 +1,3 @@
-/* eslint-env browser */
-/* eslint-disable no-undef */
-
 export function buildUrl(
   baseUrl: string,
   path: string,

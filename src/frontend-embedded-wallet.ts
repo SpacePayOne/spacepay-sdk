@@ -1,6 +1,3 @@
-/* eslint-env browser */
-/* eslint-disable no-undef */
-
 import { createModalIframe, removeModal, appendModal } from './frontend-modal'
 import { buildUrl } from './utils'
 import type {

@@ -1,6 +1,3 @@
-/* eslint-env browser */
-/* eslint-disable no-undef */
-
 const MODAL_INNER_WIDTH = 768
 const MODAL_INNER_HEIGHT = 658
 const MODAL_BORDER_RADIUS = 24
