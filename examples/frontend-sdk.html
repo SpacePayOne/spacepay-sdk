@@ -17,14 +17,17 @@
         padding: 24px;
         min-height: 100vh;
         box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
       }
       .checkout h1 {
-        margin: 0 0 8px;
+        margin: 0;
         font-size: 1.5rem;
         color: #111;
       }
       .checkout .subtitle {
-        margin: 0 0 24px;
+        margin: 0;
         color: #666;
         font-size: 0.9rem;
       }
@@ -32,7 +35,6 @@
         background: white;
         border-radius: 8px;
         padding: 20px;
-        margin-bottom: 24px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
       }
       .order-summary h2 {
@@ -53,7 +55,6 @@
         border-top: 1px solid #eee;
         font-weight: 600;
       }
-
       .payment-section {
         background: white;
         border-radius: 8px;
@@ -65,6 +66,33 @@
         font-size: 1rem;
         font-weight: 600;
         color: #333;
+      }
+      .payment-section .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      .payment-section select {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        background: white;
+      }
+      .payment-section button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        border-radius: 6px;
+        border: 1px solid #333;
+        background: #111;
+        color: white;
+        cursor: pointer;
+      }
+      .payment-section button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
       }
     </style>
   </head>
@@ -81,25 +109,41 @@
       </section>
 
       <section class="payment-section">
-        <h2>Payment</h2>
+        <h2>Control</h2>
+        <div class="controls">
+          <button type="button" id="create-payment-btn">Create new payment</button>
+          <label>
+            Mode:
+            <select id="payment-mode">
+              <option value="embedded-button">Embedded button</option>
+              <option value="embedded-checkout">Embedded checkout</option>
+              <option value="redirect">Redirect</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="payment-section">
         <div id="spacepay-checkout"></div>
-        <p style="margin-top: 8px">
+        <p style="margin-top: 12px">
           <a href="#" id="open-wallet-link">Open SpacePay wallet in modal</a>
         </p>
       </section>
     </main>
 
-    <!-- Load the frontend bundle (exports initEmbeddedCheckout on SpacePaySDK) -->
-    <script src="../dist/spacepay.bundle.js"></script>
+    <!-- Load the frontend bundle (exports initEmbeddedCheckoutButton, initEmbeddedCheckoutModal on SpacePaySDK) -->
+    <script src="../dist/spacepay-full.bundle.js"></script>
     <script>
       const APP_BASE_URL = 'https://spacepayone-user-interface-dev.vercel.app'
       const API_BASE_URL = 'https://spacepay-api-dev-s55p7.ondigitalocean.app'
       const PUBLIC_KEY = 'pk_test_cdf274c69ca18dfed5503a05972723d8'
       const SECRET_KEY = 'sk_test_871566bcac49a340ec430bc72b7db5936ef4afc95d117b84f9ddea1725c2717e'
-      const REDIRECT_URL = window.location.href
+      const REDIRECT_URL = 'https://spacepayone-user-interface-dev.vercel.app' //window.location.href
+
+      let currentPayment = null
 
       async function dangerouslyCreateNewPayment() {
-        const backendClient = SpacePaySDK.SpacePay.createBackendClient({
+        const backendClient = SpacePaySDK.createBackendClient({
           baseUrl: API_BASE_URL,
           publicKey: PUBLIC_KEY,
           secretKey: SECRET_KEY,
@@ -116,39 +160,96 @@
         return {
           paymentId: payment.paymentId,
           paymentSecretKey: payment.secret,
+          paymentUrl: payment.paymentUrl,
         }
       }
 
-      async function mountPaymentButton() {
-        const checkout = await window.SpacePaySDK.initEmbeddedCheckout({
-          appBaseUrl: APP_BASE_URL,
-          paymentId,
-          paymentSecretKey: secretKey,
-          inlineWidth: '100%',
-        })
+      function getPaymentMode() {
+        return document.getElementById('payment-mode').value
+      }
 
-        checkout.mount('#spacepay-checkout')
+      async function renderPaymentUI() {
+        const container = document.getElementById('spacepay-checkout')
+        const mode = getPaymentMode()
+        container.innerHTML = ''
+
+        if (!currentPayment) return
+
+        const { paymentId, paymentSecretKey, paymentUrl } = currentPayment
+
+        if (mode === 'embedded-button') {
+          try {
+            const checkoutButton = await window.SpacePaySDK.initEmbeddedCheckoutButton({
+              appBaseUrl: APP_BASE_URL,
+              paymentId,
+              paymentSecretKey,
+              inlineWidth: '100%',
+            })
+            checkoutButton.mount('#spacepay-checkout')
+          } catch (e) {
+            console.error(e)
+          }
+          return
+        }
+
+        if (mode === 'embedded-checkout') {
+          try {
+            const checkoutModal = await window.SpacePaySDK.initEmbeddedCheckoutModal({
+              appBaseUrl: APP_BASE_URL,
+              paymentId,
+              paymentSecretKey,
+            })
+            checkoutModal.mount()
+          } catch (e) {
+            console.error(e)
+          }
+          return
+        }
+
+        if (mode === 'redirect') {
+          window.open(paymentUrl, '_blank')
+        }
       }
 
       function openWalletButtonHandler() {
         const walletLink = document.getElementById('open-wallet-link')
         walletLink?.addEventListener('click', (event) => {
           event.preventDefault()
-          if (!window.SpacePaySDK.openWallet) {
-            console.error('SpacePaySDK.openWallet not found on global.')
+          if (!window.SpacePaySDK.initEmbeddedWalletModal) {
+            console.error('SpacePaySDK.initEmbeddedWalletModal not found on global.')
             return
           }
-          window.SpacePaySDK.openWallet({ baseUrl: APP_BASE_URL })
+          const walletModal = window.SpacePaySDK.initEmbeddedWalletModal({ baseUrl: APP_BASE_URL })
+          walletModal.mount()
         })
       }
 
-      ;(async function () {
-        if (!window.SpacePaySDK || !window.SpacePaySDK.initEmbeddedCheckout) {
-          console.error('SpacePaySDK.initEmbeddedCheckout not found on global.')
+      ;(function () {
+        if (!window.SpacePaySDK) {
+          console.error('SpacePaySDK not found on global.')
           return
         }
 
-        mountPaymentButton()
+        const createBtn = document.getElementById('create-payment-btn')
+        const modeSelect = document.getElementById('payment-mode')
+
+        createBtn.addEventListener('click', async () => {
+          createBtn.disabled = true
+          createBtn.textContent = 'Creating…'
+          try {
+            currentPayment = await dangerouslyCreateNewPayment()
+            await renderPaymentUI()
+          } catch (e) {
+            console.error(e)
+          } finally {
+            createBtn.textContent = 'Create new payment'
+            createBtn.disabled = false
+          }
+        })
+
+        modeSelect.addEventListener('change', () => {
+          if (currentPayment) renderPaymentUI()
+        })
 
         openWalletButtonHandler()
       })()

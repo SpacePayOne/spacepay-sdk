@@ -9,7 +9,7 @@ import {
   removeModal,
   showModal,
 } from './frontend-modal'
-import { buildUrl } from './utils'
+import { buildUrl, resolvePaymentContext } from './utils'
 import type {
   EmbeddedCheckoutInstance,
   EmbeddedCheckoutOptions,
@@ -17,31 +17,6 @@ import type {
 
 const DEFAULT_INLINE_WIDTH = '400px'
 const DEFAULT_INLINE_HEIGHT = '56px'
-
-async function resolvePaymentContext(
-  options: EmbeddedCheckoutOptions
-): Promise<{ paymentId: string; paymentSecretKey: string }> {
-  if (options.fetchPaymentContext) {
-    const ctx = await options.fetchPaymentContext()
-    if (!ctx || !ctx.paymentId || !ctx.paymentSecretKey) {
-      throw new Error(
-        'SpacePay embedded checkout: fetchPaymentContext must return { paymentId, paymentSecretKey }'
-      )
-    }
-    return ctx
-  }
-
-  if (!options.paymentId || !options.paymentSecretKey) {
-    throw new Error(
-      'SpacePay embedded checkout: provide paymentId & paymentSecretKey or fetchPaymentContext'
-    )
-  }
-
-  return {
-    paymentId: options.paymentId,
-    paymentSecretKey: options.paymentSecretKey,
-  }
-}
 
 /**
  * Initialize the embedded checkout experience.
@@ -55,7 +30,7 @@ async function resolvePaymentContext(
  *
  *   checkout.mount('#spacepay-checkout')
  */
-export async function initEmbeddedCheckout(
+export async function initEmbeddedCheckoutButton(
   options: EmbeddedCheckoutOptions
 ): Promise<EmbeddedCheckoutInstance> {
   const appBaseUrl = options.appBaseUrl ?? DEFAULT_APP_BASE_URL

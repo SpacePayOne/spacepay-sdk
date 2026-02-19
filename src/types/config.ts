@@ -1,3 +1,16 @@
+/**
+ * Minimal options needed to resolve payment context (paymentId + paymentSecretKey).
+ * Used by resolvePaymentContext and satisfied by EmbeddedCheckoutOptions and EmbeddedPaymentModalOptions.
+ */
+export type PaymentContextSource = {
+  paymentId?: string
+  paymentSecretKey?: string
+  fetchPaymentContext?: () => Promise<{
+    paymentId: string
+    paymentSecretKey: string
+  }>
+}
+
 export interface ClientOptions {
   /** API base URL. Defaults to https://api.app.spacepay.co.uk when omitted. */
   baseUrl?: string
@@ -76,8 +89,36 @@ export interface EmbeddedWalletOptions {
 }
 
 export interface EmbeddedWalletInstance {
-  /**
-   * Close the wallet UI (hides the modal or removes the inline iframe).
-   */
+  /** Show the wallet modal. */
+  mount(): void
+  /** Remove the modal. */
+  unmount(): void
+  /** Close the wallet UI (removes the modal from the DOM). */
+  close(): void
+}
+
+/**
+ * Options for opening the embedded full payment UI in a modal.
+ */
+export interface EmbeddedPaymentModalOptions {
+  /** Base URL of the SpacePay app. Defaults to https://app.spacepay.co.uk when omitted. */
+  appBaseUrl?: string
+  paymentId?: string
+  paymentSecretKey?: string
+  fetchPaymentContext?: () => Promise<{
+    paymentId: string
+    paymentSecretKey: string
+  }>
+}
+
+/**
+ * Instance returned when opening the embedded payment modal.
+ */
+export interface EmbeddedPaymentModalInstance {
+  /** Show the payment modal and start listening for messages. */
+  mount(): void
+  /** Remove the modal and message listener. */
+  unmount(): void
+  /** Close the modal (removes it from the DOM). */
   close(): void
 }

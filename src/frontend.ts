@@ -25,13 +25,18 @@ export type {
 export * from './utils'
 
 // Embedded checkout (iframe + postMessage helper)
-export { initEmbeddedCheckout } from './frontend-embedded'
+export { initEmbeddedCheckoutButton } from './frontend-embedded-button'
 export type {
   EmbeddedCheckoutInstance,
   EmbeddedCheckoutOptions,
+  EmbeddedPaymentModalInstance,
+  EmbeddedPaymentModalOptions,
   EmbeddedWalletInstance,
   EmbeddedWalletOptions,
 } from './types/config'
 
+// Embedded payment helper (modal-only)
+export { initEmbeddedCheckoutModal } from './frontend-embedded-checkout'
+
 // Embedded wallet helper (modal-only for now)
-export { openWallet } from './frontend-wallet'
+export { initEmbeddedWalletModal } from './frontend-embedded-wallet'
