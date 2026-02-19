@@ -1,3 +1,7 @@
+import {
+  clearEmbedMessageHandler,
+  setEmbedMessageHandler,
+} from './embed-message-handler'
 import { DEFAULT_APP_BASE_URL } from './defaults'
 import { createModalIframe, removeModal, appendModal } from './frontend-modal'
 import { buildUrl, resolvePaymentContext } from './utils'
@@ -5,6 +9,7 @@ import type {
   EmbeddedPaymentMessagePayload,
   EmbeddedPaymentModalInstance,
   EmbeddedPaymentModalOptions,
+  EmbeddedPaymentPostMessagePayload,
 } from './types/config'
 
 /**
@@ -52,13 +57,13 @@ export async function initEmbeddedCheckoutModal(
       const data = event.data as unknown
       if (!data || typeof data !== 'object') return
 
-      console.log('[🧑‍🚀 SpacePay SDK] message received:', event.origin, data)
+      console.log(
+        '[🧑‍🚀 SpacePay SDK Checkout] message received:',
+        event.origin,
+        data
+      )
 
-      const payload = data as {
-        type?: string
-        paymentId?: string
-        paymentStatus?: string
-      }
+      const payload = data as EmbeddedPaymentPostMessagePayload
       const messagePayload: EmbeddedPaymentMessagePayload = {}
       if (payload.paymentId !== undefined)
         messagePayload.paymentId = payload.paymentId
@@ -77,12 +82,12 @@ export async function initEmbeddedCheckoutModal(
       }
     }
 
-    window.addEventListener('message', messageHandler)
+    setEmbedMessageHandler(messageHandler)
   }
 
   function removeMessageHandler(): void {
     if (!messageHandler) return
-    window.removeEventListener('message', messageHandler)
+    clearEmbedMessageHandler(messageHandler)
     messageHandler = null
   }
 

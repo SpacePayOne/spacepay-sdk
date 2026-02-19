@@ -104,7 +104,15 @@ export interface EmbeddedWalletInstance {
   close(): void
 }
 
-/** Payload sent from the embedded payment iframe via postMessage. */
+/** Raw postMessage payload from the embedded payment/button iframe. */
+export interface EmbeddedPaymentPostMessagePayload {
+  type?: string
+  loggedIn?: boolean
+  paymentId?: string
+  paymentStatus?: string
+}
+
+/** Payload passed to onClose / onSuccess / onError callbacks. */
 export interface EmbeddedPaymentMessagePayload {
   paymentId?: string
   paymentStatus?: string

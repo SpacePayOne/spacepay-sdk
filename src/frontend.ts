@@ -32,6 +32,7 @@ export type {
   EmbeddedPaymentMessagePayload,
   EmbeddedPaymentModalInstance,
   EmbeddedPaymentModalOptions,
+  EmbeddedPaymentPostMessagePayload,
   EmbeddedWalletInstance,
   EmbeddedWalletOptions,
 } from './types/config'

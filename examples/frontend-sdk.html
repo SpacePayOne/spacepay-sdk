@@ -144,6 +144,8 @@
       const REDIRECT_URL = 'https://spacepayone-user-interface-dev.vercel.app'
 
       let currentPayment = null
+      /** Last embedded instance (button or modal); unmount before re-render to avoid duplicate listeners. */
+      let lastEmbeddedInstance = null
 
       async function dangerouslyCreateNewPayment() {
         const backendClient = SpacePaySDK.createBackendClient({
@@ -172,6 +174,10 @@
       }
 
       async function renderPaymentUI() {
+        if (lastEmbeddedInstance && typeof lastEmbeddedInstance.unmount === 'function') {
+          lastEmbeddedInstance.unmount()
+          lastEmbeddedInstance = null
+        }
         const container = document.getElementById('spacepay-checkout')
         const mode = getPaymentMode()
         container.innerHTML = ''
@@ -197,6 +203,7 @@
                 console.log('[Host App] payment error:', payload)
               },
             })
+            lastEmbeddedInstance = checkoutButton
             checkoutButton.mount('#spacepay-checkout')
           } catch (e) {
             console.error(e)
@@ -220,6 +227,7 @@
                 console.log('[Host App] payment error:', payload)
               },
             })
+            lastEmbeddedInstance = checkoutModal
             checkoutModal.mount()
           } catch (e) {
             console.error(e)

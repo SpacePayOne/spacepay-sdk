@@ -1,3 +1,7 @@
+import {
+  clearEmbedMessageHandler,
+  setEmbedMessageHandler,
+} from './embed-message-handler'
 import { DEFAULT_APP_BASE_URL } from './defaults'
 import {
   appendModal,
@@ -11,6 +15,7 @@ import type {
   EmbeddedCheckoutInstance,
   EmbeddedCheckoutOptions,
   EmbeddedPaymentMessagePayload,
+  EmbeddedPaymentPostMessagePayload,
 } from './types/config'
 
 const DEFAULT_INLINE_WIDTH = '400px'
@@ -93,14 +98,13 @@ export async function initEmbeddedCheckoutButton(
       const data = event.data as unknown
       if (!data || typeof data !== 'object') return
 
-      console.log('[🧑‍🚀 SpacePay SDK] message received:', event.origin, data)
+      console.log(
+        '[🧑‍🚀 SpacePay SDK Button] message received:',
+        event.origin,
+        data
+      )
 
-      const payload = data as {
-        type?: string
-        loggedIn?: boolean
-        paymentId?: string
-        paymentStatus?: string
-      }
+      const payload = data as EmbeddedPaymentPostMessagePayload
 
       if (payload.type === 'spacepay-request-login') {
         showLoginModal()
@@ -133,12 +137,12 @@ export async function initEmbeddedCheckoutButton(
       }
     }
 
-    window.addEventListener('message', messageHandler)
+    setEmbedMessageHandler(messageHandler)
   }
 
   function removeMessageHandler() {
     if (!messageHandler) return
-    window.removeEventListener('message', messageHandler)
+    clearEmbedMessageHandler(messageHandler)
     messageHandler = null
   }
 

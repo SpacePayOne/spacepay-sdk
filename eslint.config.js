@@ -65,6 +65,7 @@ export default [
   // Browser-only files: add DOM/window globals (replaces deprecated /* eslint-env browser */)
   {
     files: [
+      'src/embed-message-handler.ts',
       'src/frontend-embedded-button.ts',
       'src/frontend-embedded-checkout.ts',
       'src/frontend-embedded-wallet.ts',
