@@ -2,6 +2,7 @@ import { DEFAULT_APP_BASE_URL } from './defaults'
 import { createModalIframe, removeModal, appendModal } from './frontend-modal'
 import { buildUrl, resolvePaymentContext } from './utils'
 import type {
+  EmbeddedPaymentMessagePayload,
   EmbeddedPaymentModalInstance,
   EmbeddedPaymentModalOptions,
 } from './types/config'
@@ -53,10 +54,26 @@ export async function initEmbeddedCheckoutModal(
 
       console.log('[🧑‍🚀 SpacePay SDK] message received:', event.origin, data)
 
-      const payload = data as { type?: string }
+      const payload = data as {
+        type?: string
+        paymentId?: string
+        paymentStatus?: string
+      }
+      const messagePayload: EmbeddedPaymentMessagePayload = {}
+      if (payload.paymentId !== undefined)
+        messagePayload.paymentId = payload.paymentId
+      if (payload.paymentStatus !== undefined)
+        messagePayload.paymentStatus = payload.paymentStatus
 
       if (payload.type === 'spacepay-payment-close') {
+        options.onClose?.(messagePayload)
         close()
+      }
+      if (payload.type === 'spacepay-payment-success') {
+        options.onSuccess?.(messagePayload)
+      }
+      if (payload.type === 'spacepay-payment-error') {
+        options.onError?.(messagePayload)
       }
     }
 

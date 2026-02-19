@@ -10,6 +10,7 @@ import { buildUrl, resolvePaymentContext } from './utils'
 import type {
   EmbeddedCheckoutInstance,
   EmbeddedCheckoutOptions,
+  EmbeddedPaymentMessagePayload,
 } from './types/config'
 
 const DEFAULT_INLINE_WIDTH = '400px'
@@ -96,8 +97,9 @@ export async function initEmbeddedCheckoutButton(
 
       const payload = data as {
         type?: string
-        mode?: string
         loggedIn?: boolean
+        paymentId?: string
+        paymentStatus?: string
       }
 
       if (payload.type === 'spacepay-request-login') {
@@ -111,6 +113,23 @@ export async function initEmbeddedCheckoutButton(
         if (loggedIn) {
           hideLoginModal()
         }
+        return
+      }
+
+      const messagePayload: EmbeddedPaymentMessagePayload = {}
+      if (payload.paymentId !== undefined)
+        messagePayload.paymentId = payload.paymentId
+      if (payload.paymentStatus !== undefined)
+        messagePayload.paymentStatus = payload.paymentStatus
+
+      if (payload.type === 'spacepay-payment-close') {
+        options.onClose?.(messagePayload)
+      }
+      if (payload.type === 'spacepay-payment-success') {
+        options.onSuccess?.(messagePayload)
+      }
+      if (payload.type === 'spacepay-payment-error') {
+        options.onError?.(messagePayload)
       }
     }
 

@@ -64,6 +64,13 @@ export interface EmbeddedCheckoutOptions {
    * Height of the inline button iframe. Default: '56px'.
    */
   inlineHeight?: string
+
+  /** Called when the iframe sends spacepay-payment-close. */
+  onClose?: (payload: EmbeddedPaymentMessagePayload) => void
+  /** Called when the iframe sends spacepay-payment-success. */
+  onSuccess?: (payload: EmbeddedPaymentMessagePayload) => void
+  /** Called when the iframe sends spacepay-payment-error. */
+  onError?: (payload: EmbeddedPaymentMessagePayload) => void
 }
 
 export interface EmbeddedCheckoutInstance {
@@ -97,6 +104,12 @@ export interface EmbeddedWalletInstance {
   close(): void
 }
 
+/** Payload sent from the embedded payment iframe via postMessage. */
+export interface EmbeddedPaymentMessagePayload {
+  paymentId?: string
+  paymentStatus?: string
+}
+
 /**
  * Options for opening the embedded full payment UI in a modal.
  */
@@ -109,6 +122,12 @@ export interface EmbeddedPaymentModalOptions {
     paymentId: string
     paymentSecretKey: string
   }>
+  /** Called when the iframe sends spacepay-payment-close (e.g. user closed the flow). */
+  onClose?: (payload: EmbeddedPaymentMessagePayload) => void
+  /** Called when the iframe sends spacepay-payment-success. */
+  onSuccess?: (payload: EmbeddedPaymentMessagePayload) => void
+  /** Called when the iframe sends spacepay-payment-error. */
+  onError?: (payload: EmbeddedPaymentMessagePayload) => void
 }
 
 /**

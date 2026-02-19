@@ -29,6 +29,7 @@ export { initEmbeddedCheckoutButton } from './frontend-embedded-button'
 export type {
   EmbeddedCheckoutInstance,
   EmbeddedCheckoutOptions,
+  EmbeddedPaymentMessagePayload,
   EmbeddedPaymentModalInstance,
   EmbeddedPaymentModalOptions,
   EmbeddedWalletInstance,

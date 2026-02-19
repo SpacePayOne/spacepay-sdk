@@ -132,15 +132,16 @@
     </main>
 
     <!-- Load the frontend bundle (exports initEmbeddedCheckoutButton, initEmbeddedCheckoutModal on SpacePaySDK) -->
-    <!-- <script src="../dist/spacepay-full.bundle.js"></script> -->
-    <script src="https://pub-e21c1fba794f48a6b4ec1facf5d68801.r2.dev/latest/spacepay-full.bundle.js"></script>
+    <script src="../dist/spacepay-full.bundle.min.js"></script>
+    <!-- <script src="https://pub-e21c1fba794f48a6b4ec1facf5d68801.r2.dev/latest/spacepay-full.bundle.min.js"></script> -->
     <script>
-      const APP_BASE_URL = 'https://spacepayone-user-interface-dev.vercel.app'
+      // const APP_BASE_URL = 'https://spacepayone-user-interface-dev.vercel.app'
+      const APP_BASE_URL = 'http://localhost:3000'
       const API_BASE_URL = 'https://spacepay-api-dev-s55p7.ondigitalocean.app'
       const PUBLIC_KEY = 'pk_test_cdf274c69ca18dfed5503a05972723d8' // TODO: replace with your own public key
       const SECRET_KEY = 'sk_test_871566bcac49a340ec430bc72b7db5936ef4afc95d117b84f9ddea1725c2717e' // TODO: replace with your own secret key
-      const REDIRECT_URL = window.location.href
-      // const REDIRECT_URL = 'https://spacepayone-user-interface-dev.vercel.app'
+      // const REDIRECT_URL = window.location.href
+      const REDIRECT_URL = 'https://spacepayone-user-interface-dev.vercel.app'
 
       let currentPayment = null
 
@@ -186,6 +187,15 @@
               paymentId,
               paymentSecretKey,
               inlineWidth: '100%',
+              onClose: (payload) => {
+                console.log('[Host App] payment closed:', payload)
+              },
+              onSuccess: (payload) => {
+                console.log('[Host App] payment success:', payload)
+              },
+              onError: (payload) => {
+                console.log('[Host App] payment error:', payload)
+              },
             })
             checkoutButton.mount('#spacepay-checkout')
           } catch (e) {
@@ -200,6 +210,15 @@
               appBaseUrl: APP_BASE_URL,
               paymentId,
               paymentSecretKey,
+              onClose: (payload) => {
+                console.log('[Host App] payment closed:', payload)
+              },
+              onSuccess: (payload) => {
+                console.log('[Host App] payment success:', payload)
+              },
+              onError: (payload) => {
+                console.log('[Host App] payment error:', payload)
+              },
             })
             checkoutModal.mount()
           } catch (e) {
