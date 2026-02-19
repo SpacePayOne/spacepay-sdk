@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals'
 import SpacePay, { SpacePayBackendClient, SpacePayCheckoutClient } from '../src'
+import { DEFAULT_API_BASE_URL } from '../src/defaults'
 import { Currency } from '../src/types'
 import { ApiError } from '../src/types/errors'
 
@@ -12,24 +13,24 @@ describe('BaseSpacePayClient', () => {
   })
 
   describe('constructor validation', () => {
-    it('should throw error when baseUrl is missing', () => {
-      expect(() => {
-        new SpacePayBackendClient({ baseUrl: '', publicKey: 'key' }, 'secret')
-      }).toThrow('baseUrl required')
+    it('should use default baseUrl when baseUrl is omitted or null/undefined', () => {
+      const clientUndef = new SpacePayBackendClient(
+        { baseUrl: undefined as any, publicKey: 'key' },
+        'secret'
+      )
+      expect((clientUndef as any).baseUrl).toBe(DEFAULT_API_BASE_URL)
 
-      expect(() => {
-        new SpacePayBackendClient(
-          { baseUrl: null as any, publicKey: 'key' },
-          'secret'
-        )
-      }).toThrow('baseUrl required')
+      const clientNull = new SpacePayBackendClient(
+        { baseUrl: null as any, publicKey: 'key' },
+        'secret'
+      )
+      expect((clientNull as any).baseUrl).toBe(DEFAULT_API_BASE_URL)
 
-      expect(() => {
-        new SpacePayBackendClient(
-          { baseUrl: undefined as any, publicKey: 'key' },
-          'secret'
-        )
-      }).toThrow('baseUrl required')
+      const clientOmitted = new SpacePayBackendClient(
+        { publicKey: 'key' },
+        'secret'
+      )
+      expect((clientOmitted as any).baseUrl).toBe(DEFAULT_API_BASE_URL)
     })
 
     it('should throw error when publicKey is missing', () => {
