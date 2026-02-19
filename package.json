@@ -42,9 +42,9 @@
     "lint:fix": "eslint \"src/**/*.ts\" \"examples/**/*.ts\" --fix",
     "run:example:full": "tsx examples/full.ts",
     "run:example:backend": "tsx examples/backend-only.ts",
-    "bundle": "esbuild src/frontend.ts --bundle --format=iife --global-name=SpacePaySDK --outfile=dist/spacepay.bundle.js --minify",
+    "bundle": "esbuild src/frontend.ts --bundle --format=iife --global-name=SpacePaySDK --outfile=dist/spacepay.bundle.js && esbuild src/frontend.ts --bundle --format=iife --global-name=SpacePaySDK --outfile=dist/spacepay.bundle.min.js --minify",
     "bundle:dev": "esbuild src/frontend.ts --bundle --format=iife --global-name=SpacePaySDK --outfile=dist/spacepay.bundle.js",
-    "bundle:full": "esbuild src/index.ts --bundle --format=iife --global-name=SpacePaySDK --outfile=dist/spacepay-full.bundle.js --minify"
+    "bundle:full": "esbuild src/index.ts --bundle --format=iife --global-name=SpacePaySDK --outfile=dist/spacepay-full.bundle.js && esbuild src/index.ts --bundle --format=iife --global-name=SpacePaySDK --outfile=dist/spacepay-full.bundle.min.js --minify"
   },
   "keywords": [
     "spacepay",
