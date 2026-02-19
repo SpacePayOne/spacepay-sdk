@@ -1,5 +1,5 @@
 const MODAL_INNER_WIDTH = 768
-const MODAL_INNER_HEIGHT = 600
+const MODAL_INNER_HEIGHT = 668
 const MODAL_BORDER_RADIUS = 24
 const MODAL_OVERLAY_GRADIENT =
   'linear-gradient(to bottom, rgba(10, 10, 10, 0.8), rgba(11, 18, 32, 0.8), rgba(10, 10, 10, 0.8))'

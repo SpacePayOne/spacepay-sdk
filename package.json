@@ -1,6 +1,6 @@
 {
   "name": "@spacepay/client-sdk",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "type": "module",
   "description": "Lightweight SDK for SpacePay-like API - works in Node 18+ and modern browsers",
   "main": "dist/index.js",
