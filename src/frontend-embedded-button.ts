@@ -20,6 +20,7 @@ import type {
 
 const DEFAULT_INLINE_WIDTH = '400px'
 const DEFAULT_INLINE_HEIGHT = '56px'
+const DEFAULT_BORDER_RADIUS = '12px'
 
 /**
  * Initialize the embedded checkout experience.
@@ -39,6 +40,7 @@ export async function initEmbeddedCheckoutButton(
   const appBaseUrl = options.appBaseUrl ?? DEFAULT_APP_BASE_URL
   const inlineWidth = options.inlineWidth ?? DEFAULT_INLINE_WIDTH
   const inlineHeight = options.inlineHeight ?? DEFAULT_INLINE_HEIGHT
+  const borderRadius = DEFAULT_BORDER_RADIUS
 
   const { paymentId, paymentSecretKey } = await resolvePaymentContext(options)
 
@@ -168,6 +170,7 @@ export async function initEmbeddedCheckoutButton(
       iframe.style.width = inlineWidth
       iframe.style.height = inlineHeight
       iframe.style.background = 'transparent'
+      iframe.style.borderRadius = borderRadius
 
       // Clear previous content and insert the iframe
       while (el.firstChild) el.removeChild(el.firstChild)

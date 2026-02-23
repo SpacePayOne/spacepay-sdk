@@ -42,7 +42,7 @@ console.log('Payment ID:', payment.paymentId)
 
 ## Frontend (TypeScript / bundlers)
 
-## Show payment details (optional)
+### Show payment details (optional)
 
 Use the frontend checkout client for browser-safe usage (no secret key), and build your own UI. For they payment itself, redirect the user to `paymentUrl` (Hosted Checkout) or use Embedded Checkout option (below).
 
@@ -74,7 +74,7 @@ const quotes = await paymentClient.getActiveQuotes(paymentId)
 console.log('Active quotes:', quotes)
 ```
 
-## Hosted Checkout
+### Hosted Checkout
 
 For the most simple integration, redirect the user to `paymentUrl` return from the `createPayment` request. After they payment is completele, user is redirected back to the success page you defined while creating the payment.
 
@@ -90,8 +90,6 @@ import {
 
 // Option 1 - Embedded button (inline iframe)
 const checkoutButton = await initEmbeddedCheckoutButton({
-  // Optional, defaults to https://app.spacepay.co.uk
-  appBaseUrl: 'https://app.spacepay.co.uk',
   paymentId: 'payment_id_from_backend',
   paymentSecretKey: 'payment_secret_from_backend',
   onClose: (payload) => {
@@ -106,10 +104,16 @@ const checkoutButton = await initEmbeddedCheckoutButton({
 })
 
 checkoutButton.mount('#spacepay-checkout')
+```
 
+```ts
 // Option 2 - Embedded full checkout in a modal
+import {
+  initEmbeddedCheckoutButton,
+  initEmbeddedCheckoutModal,
+} from '@spacepay/client-sdk/frontend'
+
 const checkoutModal = await initEmbeddedCheckoutModal({
-  appBaseUrl: 'https://app.spacepay.co.uk',
   paymentId: 'payment_id_from_backend',
   paymentSecretKey: 'payment_secret_from_backend',
   onClose: (payload) => {
@@ -124,9 +128,6 @@ const checkoutModal = await initEmbeddedCheckoutModal({
 })
 
 checkoutModal.mount()
-
-// Option 3 - Redirect
-window.location.href = 'payment_redirect_url_from_backend'
 ```
 
 This will:
@@ -145,9 +146,8 @@ If you prefer a `<script>` tag, you can use the prebuilt browser bundle:
 <script>
   ;(async function () {
     const checkout = await window.SpacePaySDK.initEmbeddedCheckoutButton({
-      appBaseUrl: 'https://app.spacepay.co.uk',
-      paymentId: '...',
-      paymentSecretKey: '...',
+      paymentId: 'payment_id_from_backend',
+      paymentSecretKey: 'payment_secret_from_backend',
       onClose: (payload) => {
         console.log('Payment closed', payload)
       },
